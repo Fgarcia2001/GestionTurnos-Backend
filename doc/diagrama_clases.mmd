@@ -1,0 +1,118 @@
+classDiagram
+  class Plan {
+    +Guid id
+    +string Name
+    +string Description
+    +Double Price
+    +int DurationDays
+    +bool IsActive
+    +bool IsDeleted
+    +dateTime UpdateDateTime
+    +dateTime DeleteDateTime
+  }
+
+  class BusinessSubscription {
+    +Guid Id
+    +Guid BusinessId
+    +Guid PlanId
+    +dateTime StartDate
+    +dateTime EndDate
+    +status Status
+    +bool IsDeleted
+    +dateTime UpdateDateTime
+    +dateTime DeleteDateTime
+  }
+
+  class Business {
+    +guid Id
+    +string Name
+    +string url
+    +string url_logo
+    +Business Type_business
+    +bool IsDeleted
+    +dateTime UpdateDateTime
+    +dateTime DeleteDateTime
+  }
+
+  class Staff {
+    +guid Id
+    +string Name
+    +string email
+    +string password
+    +string url_image
+    +int phone
+    +bool isDeleted
+    +Rol Rol
+    +dateTime UpdateDateTime
+    +dateTime DeleteDateTime
+  }
+
+  class Branch {
+    +guid Id
+    +guid BusinessId
+    +string Name
+    +string Address
+    +string City
+    +string Phone
+    +status Status
+    +bool IsDeleted
+    +dateTime UpdateDateTime
+    +dateTime DeleteDateTime
+  }
+
+  class Schedules {
+    +Guid Id
+    +string DaysClosedOfWeek
+    +dateTime StartTime
+    +dateTime EndTime
+    +double IntervalHour
+    +bool IsDeleted
+    +dateTime UpdateDateTime
+    +dateTime DeleteDateTime
+  }
+
+  class Service {
+    +guid Id
+    +string Name
+    +double Price
+    +string categoria
+    +string Description
+    +dateTime Duration
+    +bool IsDeleted
+    +dateTime UpdateDateTime
+    +dateTime DeleteDateTime
+  }
+
+  class Client {
+    +guid Id
+    +string Name
+    +string email
+    +int telefono
+    +DateTime Birthday
+    +bool IsDeleted
+    +dateTime UpdateDateTime
+    +dateTime DeleteDateTime
+  }
+
+  class Appointment {
+    +dateDay Day
+    +dateTime endHour
+    +dateTime startHour
+    +String observation
+    +status status
+    +payment payment
+    +Double totalCost
+    +bool isDeleted
+    +dateTime UpdateDateTime
+    +dateTime DeleteDateTime
+  }
+
+  Plan "1" --> "0..*" BusinessSubscription : has
+  Business "1" --> "0..*" BusinessSubscription : subscribes
+  Business "1" --> "0..*" Staff : employs
+  Business "1" --> "1" Client : manages
+  Staff "1" --> "0..*" Branch : works in
+  Branch "1" --> "1" Schedules : has
+  Branch "1" --> "0..*" Service : offers
+  Service "1..*" --> "0..*" Appointment : booked in
+  Client "1" --> "1..*" Appointment : books
