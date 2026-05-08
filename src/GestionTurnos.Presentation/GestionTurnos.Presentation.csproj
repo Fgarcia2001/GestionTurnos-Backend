@@ -11,10 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\GestionTurnos.Application\GestionTurnos.Application.csproj" />
     <ProjectReference Include="..\GestionTurnos.Infrastructure\GestionTurnos.Infrastructure.csproj" />
   </ItemGroup>
