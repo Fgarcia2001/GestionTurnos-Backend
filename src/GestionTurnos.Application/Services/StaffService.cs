@@ -25,22 +25,6 @@ namespace GestionTurnos.Application.Services
              return newStaff;
          }
 
-        public Staff CreateStaffWhitBusiness(StaffRequest request)
-        {
-            var newBusiness = new Business
-            {
-                Id = Guid.NewGuid(),
-                Name = $"{request.Name} - {request.BusinessCategory}",
-                Url = $"http://www.{request.Name.Replace(" ", "")}.FCMTurniFy.com"
-            };
-
-            var newStaff = request.ToStaff(newBusiness);
-                
-            _staffRepository.Add(newStaff);
-
-            return newStaff;
-        }
-
 
         public void DeleteStaff(Guid id)
          {

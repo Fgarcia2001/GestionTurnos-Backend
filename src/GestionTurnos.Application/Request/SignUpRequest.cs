@@ -1,10 +1,12 @@
 ﻿using GestionTurnos.Domain.Entities;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-
+using System.Text;
 
 namespace GestionTurnos.Application.Request
 {
-    public class StaffRequest
+    public class SignUpRequest
     {
         public required string Name { get; set; } = string.Empty;
 
@@ -18,6 +20,9 @@ namespace GestionTurnos.Application.Request
         public string? LinkPhoto { get; set; } = string.Empty;
 
         public Rol Rol { get; set; }
+
+        [Required]
+        public string BusinessCategory { get; set; } = string.Empty;
 
     }
 }
