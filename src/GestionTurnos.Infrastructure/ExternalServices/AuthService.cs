@@ -102,7 +102,7 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, Idbusiness.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, NameStaff),
+                new Claim(JwtRegisteredClaimNames.Name, NameStaff),
                 new Claim(ClaimTypes.Role, Rol.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat,
