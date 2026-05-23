@@ -19,7 +19,5 @@ namespace GestionTurnos.Application.Request
 
         public Rol Rol { get; set; }
 
-        public Guid BusinessId { get; set; }
-
     }
 }

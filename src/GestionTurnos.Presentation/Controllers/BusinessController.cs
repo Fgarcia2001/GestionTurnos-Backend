@@ -1,10 +1,10 @@
 ﻿using GestionTurnos.Application.Abstraction;
+using GestionTurnos.Application.Request;
+using GestionTurnos.Application.Response;
 using GestionTurnos.Domain.Entities;
 using GestionTurnos.Presentation.Authorization;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-
 
 namespace GestionTurnos.Presentation.Controllers
 {
@@ -18,38 +18,41 @@ namespace GestionTurnos.Presentation.Controllers
         {
             _businessService = businessService;
         }
-        [Authorize(Policy = Policies.Admin)]
-        [HttpGet]
-        public ActionResult<Business> GetAll()
-        {
 
-            return Ok(_businessService.GetAll());
-        }
-        [Authorize(Policy = Policies.Admin)]
-        [HttpGet("{id}")]
-        public ActionResult<Business> GetById(Guid id)
+        
+        [HttpGet("global")]
+        public ActionResult<List<Business>> GetAllGlobal()
         {
-            return Ok(_businessService.GetById(id));
+            return Ok(_businessService.GetAllGlobal());
         }
 
-        [Authorize(Policy = Policies.Admin)]
-        [HttpPut("{id}")]
-        public ActionResult<bool> Update(Guid id, [FromBody] string value)
+        
+
+
+
+        [Authorize(Roles = Policies.Admin)]
+        [HttpGet("/MyBusiness")] 
+        public ActionResult<BusinessDashboardResponse> GetMyBusinessWithEcosystem()
         {
+
+            var businessEcosystem = _businessService.GetBusinessEcosystem();
+            return Ok(businessEcosystem);
+        }
+
+        [Authorize(Roles = Policies.Admin)]
+        [HttpPut("/MyBusiness/Update")]
+        public ActionResult UpdateMyBusiness([FromBody] BusinessUpdateRequest request)
+        {
+            _businessService.Update(request);
+            return NoContent();
+        }
+
+        [HttpDelete("/MyBusiness/Delete")]
+        public ActionResult<bool> Delete()
+        {
+            _businessService.Delete();
             return Ok(true);
         }
 
-        [HttpDelete("{id}")]
-        public ActionResult<bool> Delete(Guid id)
-        {
-            _businessService.Delete(id);
-            return Ok(true);
-        }
-
-        /*[HttpPatch("{id}")]
-        public ActionResult<bool> UpdatePlanBusines(Guid id, [FromBody] string value)
-        {
-            return Ok(true);
-        }*/
     }
-    }
+}

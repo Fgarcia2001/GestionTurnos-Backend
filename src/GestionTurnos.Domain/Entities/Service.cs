@@ -18,7 +18,7 @@ namespace GestionTurnos.Domain.Entities
 
         public int Duration { get; set; }
 
-        public double Price { get; set; }
+        public decimal Price { get; set; }
 
         // Propiedad de navegación inversa
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();

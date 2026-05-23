@@ -20,5 +20,9 @@ namespace GestionTurnos.Domain.Entities
         // Relación con Clientes
         public virtual ICollection<Client> Clients { get; set; } = new List<Client>();
 
+        public virtual ICollection<Service> Services { get; set; } = new List<Service>();
+
+
+
     }
 }

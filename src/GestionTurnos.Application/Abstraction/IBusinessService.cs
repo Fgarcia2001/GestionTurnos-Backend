@@ -1,20 +1,18 @@
-﻿using GestionTurnos.Domain.Entities;
+﻿using GestionTurnos.Application.Request;
+using GestionTurnos.Application.Response;
+using GestionTurnos.Domain.Entities;
 
 namespace GestionTurnos.Application.Abstraction
 {
     public interface IBusinessService
     {
-
-        List<Business> GetAll();
-        Business GetById(Guid id);
-
         Business Create(Business business);
+        void Delete();
 
-        void Update(Business value);
+        List<Business> GetAllGlobal();
 
-        void Delete (Guid id);
+        BusinessDashboardResponse GetBusinessEcosystem();
 
-        public List<Business> GetAllByBusiness(Guid id_Business);
-       
+        void Update(BusinessUpdateRequest value);
     }
 }

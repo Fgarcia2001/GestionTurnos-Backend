@@ -1,5 +1,6 @@
 ﻿using GestionTurnos.Application.Abstraction.Infrastructure;
 using GestionTurnos.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestionTurnos.Infrastructure.Persistance.Repository
 {
@@ -9,9 +10,12 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
             {
             }
 
-        public List<Staff> GetStaffOfBusiness(Guid id_business)
+        public List<Staff> GetAllGlobal()
         {
-            return _dbSet.Where(s => s.BusinessId == id_business).ToList();
+            return _context.Staffs
+                           .IgnoreQueryFilters() 
+                           .Include(s => s.Business) 
+                           .ToList();
         }
     }
        

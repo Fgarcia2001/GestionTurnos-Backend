@@ -11,14 +11,12 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-
 namespace GestionTurnos.Infrastructure.ExternalServices
 {
     public class AuthService : IAuthService
     {
         private readonly IStaffRepository _staffRepository;
         private readonly IConfiguration _configuration;
-        
 
         public AuthService(IStaffRepository staffRepository, IConfiguration configuration)
         {
@@ -26,24 +24,27 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             _configuration = configuration;
         }
 
-        //Registro de un nuevo negocio y su staff asociado y devuelvo un token JWT para el nuevo staff registrado.
-        public AuthResponse? SignUp(SignUpRequest request) // Ahora el rol admin se asigna automáticamente en el backm, no se recibe por request ya q es peligroso.
+        // Registro de un nuevo negocio, nueva sucursal, se agrega el plan y su staff asociado (Admin) con devolución de token JWT
+        public AuthResponse? SignUp(SignUpRequest request)
         {
             bool emailExists = _staffRepository.GetAll().Any(s => s.Email == request.Email);
-            if (emailExists) {
-               throw new ConflictException("El correo electrónico ya está registrado.");
+            if (emailExists)
+            {
+                throw new ConflictException("El correo electrónico ya está registrado.");
             }
 
-            // Al momento de registrar un nuevo negocio, se crea automáticamente un nuevo staff asociado a ese negocio con el rol de admin
-            // y una branch principal con la dirección y teléfono proporcionados en el request.
+            
+            if (!Enum.TryParse<TypeBusiness>(request.BusinessCategory, ignoreCase: true, out var typeBusinessParsed))
+            {
+                //throw new BadRequestException($"La categoría de negocio '{request.BusinessCategory}' no es válida.");
+            }
 
             var newBusiness = new Business
             {
                 Id = Guid.NewGuid(),
                 Name = $"{request.Name} - {request.BusinessCategory}",
                 Url = $"http://www.{request.Name.Replace(" ", "")}.FCMTurniFy.com",
-                TypeBusiness = Enum.Parse<TypeBusiness>(request.BusinessCategory, ignoreCase: true)
-
+                TypeBusiness = typeBusinessParsed
             };
 
             var newBranch = new Branch
@@ -52,45 +53,43 @@ namespace GestionTurnos.Infrastructure.ExternalServices
                 Address = request.Address,
                 Phone = request.BranchPhone,
                 BusinessId = newBusiness.Id,
-                City= request.City,
+                City = request.City,
                 Business = newBusiness
             };
 
+            // El rol de Admin se fuerza de manera interna y segura dentro del Mapper
             var newStaff = request.ToRegisterNewBusinessAndStaff(newBusiness, newBranch);
             _staffRepository.Add(newStaff);
 
             return new AuthResponse
             {
-                Token = GenerarToken(newStaff.Id, newStaff.Name, newStaff.Rol),
-
+                // Pasamos el ID del Staff y explícitamente el ID del negocio recién creado
+                Token = GenerarToken(newStaff.Id, newStaff.Name, newStaff.Rol, newBusiness.Id),
             };
         }
 
         public AuthResponse? SignIn(SignInRequest request)
         {
-            Guid userId;
-            Rol rol;
-            string contrasenaHasheada;
-
             var user = _staffRepository.GetAll().FirstOrDefault(s => s.Email == request.Email);
             if (user == null)
             {
-                throw new Exception("Credenciales Incorrectas.");
-             }
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
-                return null;
+                throw new Exception("Credenciales Incorrectas."); // O una excepción personalizada propia
+            }
 
-            userId = user.Id;
-            contrasenaHasheada = user.Password;
-            rol = user.Rol;
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+            {
+                return null;
+            }
+
             return new AuthResponse
             {
-                Token = GenerarToken(userId, user.Name, rol),
-            
+                
+                Token = GenerarToken(user.Id, user.Name, user.Rol, user.BusinessId),
             };
         }
 
-        private string GenerarToken(Guid Idbusiness, string NameStaff, Rol Rol)
+        
+        private string GenerarToken(Guid userId, string nameStaff, Rol rol, Guid? businessId)
         {
             string key = _configuration["Jwt:Key"]!;
             string issuer = _configuration["Jwt:Issuer"]!;
@@ -100,16 +99,22 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            
+            var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, Idbusiness.ToString()),
-                new Claim(JwtRegisteredClaimNames.Name, NameStaff),
-                new Claim(ClaimTypes.Role, Rol.ToString()),
+                new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()), 
+                new Claim(JwtRegisteredClaimNames.Name, nameStaff),
+                new Claim(ClaimTypes.Role, rol.ToString()),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Iat,
-                    DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(),
-                    ClaimValueTypes.Integer64)
+                new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
             };
+
+            // 2. DETALLE CLAVE: El claim BusinessId solo se inyecta si existe un ID de negocio asociado.
+            // Si el rol es Sysadmin, businessId llegará como null y se omitirá de forma limpia y segura.
+            if (businessId.HasValue && businessId.Value != Guid.Empty)
+            {
+                claims.Add(new Claim("BusinessId", businessId.Value.ToString()));
+            }
 
             var token = new JwtSecurityToken(
                 issuer: issuer,

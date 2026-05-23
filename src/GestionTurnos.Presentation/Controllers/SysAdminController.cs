@@ -25,7 +25,7 @@ namespace GestionTurnos.Presentation.Controllers
         public ActionResult<List<GlobalStaffResponse>> GetAll()
         {
 
-            return Ok(_staffService.GetAll());
+            return Ok(_staffService.GetStaffOfCurrentBusiness());
         }
 
         [HttpGet("{id}")]

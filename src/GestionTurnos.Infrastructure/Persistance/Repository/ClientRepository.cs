@@ -1,5 +1,6 @@
 ﻿using GestionTurnos.Application.Abstraction.Infrastructure;
 using GestionTurnos.Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace GestionTurnos.Infrastructure.Persistance.Repository
 {
@@ -10,17 +11,17 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
         }
         public Client? GetClientByName(string name)
         {
-            return _dbSet.FirstOrDefault(x => x.Name == name && !x.IsDeleted);
+            return _dbSet.FirstOrDefault(x => x.Name.Contains(name) && !x.IsDeleted);
         }
 
-        public Client? GetClientByNameForBusiness(string name, Guid businessId)
+       
+        public List<Client> GetAllGlobal()
         {
-            return _dbSet.FirstOrDefault(x => x.Name == name && x.BusinessId == businessId && !x.IsDeleted);
-        }
-
-        public List<Client> GetClientsOfBusiness(Guid businessId)
-        {
-            return _dbSet.Where(x => x.BusinessId == businessId && !x.IsDeleted).ToList();
+            return _context.Clients
+                           .IgnoreQueryFilters() 
+                           .Where(x => !x.IsDeleted)
+                           .Include(x => x.Business) 
+                           .ToList();
         }
     }
 }

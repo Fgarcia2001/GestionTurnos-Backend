@@ -2,61 +2,71 @@
 using GestionTurnos.Application.Abstraction.Infrastructure;
 using GestionTurnos.Application.Mapper;
 using GestionTurnos.Application.Request;
+using GestionTurnos.Application.Response;
 using GestionTurnos.Domain.Entities;
 
 namespace GestionTurnos.Application.Services
 {
     public class StaffService : IStaffService
     {
-
         private readonly IStaffRepository _staffRepository;
-        //private readonly IBusinessRepository _businessRepository;
-        public StaffService(IStaffRepository staffRepository /*IBusinessRepository businessRepository*/)
+        private readonly ITenantProvider _tenantProvider;
+
+        public StaffService(IStaffRepository staffRepository, ITenantProvider tenantProvider)
         {
             _staffRepository = staffRepository;
-            // _businessRepository = businessRepository;
-        }      
-         public Staff CreateStaff(StaffRequest request, Guid id_Business)
-         {
-
-             var newStaff = request.ToStaff(id_Business);
-
-            _staffRepository.Add(newStaff);
-             return newStaff;
-         }
-
-
-        public void DeleteStaff(Guid id)
-         {
-            var User = _staffRepository.GetById(id) ?? throw new Exception("Usuario no encontrado");
-            _staffRepository.Delete(id);
-         }
-         public List<Staff> GetAll()
-         {
-             return _staffRepository.GetAll();
-         }
-
-         public Staff? GetById(Guid id)
-         {
-            var existingStaff = _staffRepository.GetById(id) ?? throw new Exception("Usuario no encontrado");
-
-            return existingStaff;
-         }
-
-        public List<Staff> GetStaffOfBusiness(Guid id_business)
-        {
-            return _staffRepository.GetStaffOfBusiness(id_business);
+            _tenantProvider = tenantProvider;
         }
 
-        public Staff UpdateStaff(StaffRequest staff, Guid idStaff)
-         {
-            var existingStaff = _staffRepository.GetById(idStaff) ?? throw new Exception("Usuario no encontrado");
+        public StaffsResponse CreateStaff(StaffRequest request)
+        {
+            var IdBusiness = _tenantProvider.GetBusinessId()
+                ?? throw new InvalidOperationException("No se pudo determinar el comercio actual.");
+            var newStaff = request.ToStaff();
 
-            existingStaff = staff.ToStaff(existingStaff.BusinessId) ?? throw new Exception();
+            newStaff.BusinessId = IdBusiness;
+            _staffRepository.Add(newStaff);
+
+            return newStaff.ToResponse();
+        }
+
+        public List<StaffsResponse> GetStaffOfCurrentBusiness()
+        {
+            
+            var staffList = _staffRepository.GetAll();
+            return staffList.Select(s => s.ToResponse()).ToList();
+        }
+
+        public StaffsResponse GetById(Guid id)
+        {
+            var staff = _staffRepository.GetById(id)
+                ?? throw new KeyNotFoundException("Usuario no encontrado o no pertenece a su comercio.");
+            return staff.ToResponse();
+        }
+
+        public StaffsResponse UpdateStaff(StaffRequest request, Guid idStaff)
+        {
+            var existingStaff = _staffRepository.GetById(idStaff)
+                ?? throw new KeyNotFoundException("Usuario no encontrado.");
+
+           
+            existingStaff.UpdateFromDto(request);
+
             _staffRepository.Update(existingStaff);
-                 return existingStaff;
-        
-         }
-       
+            return existingStaff.ToResponse();
+        }
+
+        public void DeleteStaff(Guid id)
+        {
+            var staff = _staffRepository.GetById(id)
+                ?? throw new KeyNotFoundException("Usuario no encontrado.");
+            _staffRepository.Delete(id);
+        }
+
+        public List<GlobalStaffResponse> GetAllGlobal()
+        {
+            var globalList = _staffRepository.GetAllGlobal();
+            return globalList.Select(s => s.ToGlobalResponse()).ToList();
+        }
     }
 }

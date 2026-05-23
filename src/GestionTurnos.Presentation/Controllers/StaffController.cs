@@ -21,21 +21,22 @@ namespace GestionTurnos.Presentation.Controllers
         }
         
         [Authorize(Policy = Policies.Admin)]
-        [HttpGet("Business/{businessId}")]
-        public ActionResult<List<StaffsResponse>> GetStaffOfBusiness([FromRoute] Guid businessId) // MICAEL PREGUNTALE AL PROFE SI USAR TENANT
+        [HttpGet("Business/Staffs")]
+        public ActionResult<List<StaffsResponse>> GetStaffOfBusiness() 
         {
             /*var ClaimBusinessId = HttpContext.User.Claims.Where(c => c.Type == "BusinessId");
             if(ClaimBusinessId.ToString() != businessId.ToString())
             {
                 return Forbid();
             }*/
-            return Ok(_staffService.GetStaffOfBusiness(businessId));
+            return Ok(_staffService.GetStaffOfCurrentBusiness());
         }
         [Authorize(Policy = Policies.Admin)]
         [HttpPost]
         public ActionResult<StaffsResponse> CreateStaff([FromBody] StaffRequest Staff)
         {
-           return Ok(_staffService.CreateStaff(Staff, Staff.BusinessId));
+            var createdStaff = _staffService.CreateStaff(Staff);
+            return Ok(createdStaff);
 
         }
 

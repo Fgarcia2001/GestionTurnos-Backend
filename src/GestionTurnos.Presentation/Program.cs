@@ -28,8 +28,11 @@ builder.Services.AddScoped<IBusinessService, BusinessService>();
 builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBranchRepository, BranchRepository>();
+builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddDbContext<FMCTurnosDbContext>(options =>
     options.UseSqlServer(connectionString));
