@@ -1,17 +1,34 @@
 ﻿using GestionTurnos.Application.Abstraction.Infrastructure;
 using GestionTurnos.Domain.Entities;
+using GestionTurnos.Infrastructure.Persistance;
+using GestionTurnos.Infrastructure.Persistance.Repository;
+using Microsoft.EntityFrameworkCore;
 
-namespace GestionTurnos.Infrastructure.Persistance.Repository
+public class BusinessRepository : BaseRepository<Business>, IBusinessRepository
 {
-    public class BusinessRepository : BaseRepository<Business>, IBusinessRepository
-    {
-        public BusinessRepository(FMCTurnosDbContext context) : base(context)
-        {
-        }
+    private readonly ITenantProvider _tenantProvider;
 
-        public List<Business> GetAllByBusiness(Guid id_Business)
-        {
-            return _dbSet.Where(s => s.Id == id_Business && !s.IsDeleted).ToList();
-        }
+    public BusinessRepository(FMCTurnosDbContext context, ITenantProvider tenantProvider) : base(context)
+    {
+        _tenantProvider = tenantProvider;
+    }
+
+    public Business? GetBusinessWithEcosystem()
+    {
+        var currentTenantId = _tenantProvider.GetBusinessId();
+
+        return _context.Businesses
+                       .Include(b => b.Branches)
+                       .Include(b => b.Services)
+                       .Include(b => b.Clients)
+                       .FirstOrDefault(b => b.Id == currentTenantId && !b.IsDeleted);
+    }
+
+    public List<Business> GetAllGlobal()
+    {
+        return _context.Businesses
+                       .IgnoreQueryFilters()
+                       .Where(b => !b.IsDeleted)
+                       .ToList();
     }
 }

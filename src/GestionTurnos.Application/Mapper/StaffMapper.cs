@@ -1,11 +1,12 @@
 ﻿using GestionTurnos.Application.Request;
+using GestionTurnos.Application.Response;
 using GestionTurnos.Domain.Entities;
 
 namespace GestionTurnos.Application.Mapper
 {
     public static class StaffMapper
     {
-        public static Staff ToStaff(this StaffRequest staffRequest, Guid businessId)
+        public static Staff ToStaff(this StaffRequest staffRequest)
         {
             return new Staff
             {
@@ -15,11 +16,46 @@ namespace GestionTurnos.Application.Mapper
                 Password = staffRequest.Password,
                 Phone = staffRequest.Phone,
                 Rol = staffRequest.Rol,
-                LinkPhoto = staffRequest.LinkPhoto,
-                BusinessId = businessId
+                LinkPhoto = staffRequest.LinkPhoto
             };
         }
 
-       
+        public static StaffsResponse ToResponse(this Staff entity)
+        {
+            return new StaffsResponse
+            {
+                IdStaff = entity.Id,
+                StaffName = entity.Name,
+                StaffEmail = entity.Email,
+                StaffPhone = entity.Phone,
+                Rol = entity.Rol,
+                StaffLinkPhoto = entity.LinkPhoto
+            };
+        }
+
+        public static GlobalStaffResponse ToGlobalResponse(this Staff entity)
+        {
+            return new GlobalStaffResponse
+            {
+                IdStaff = entity.Id,
+                StaffName = entity.Name,
+                StaffEmail = entity.Email,
+                StaffPhone = entity.Phone,
+                Rol = entity.Rol,
+                StaffLinkPhoto = entity.LinkPhoto,
+                BusinessId = entity.BusinessId,
+                BusinessName = entity.Business != null ? entity.Business.Name : "Desconocido"
+            };
+        }
+
+        public static void UpdateFromDto(this Staff entity, StaffRequest request)
+        {
+            entity.Name = request.Name;
+            entity.Email = request.Email;
+            entity.Password = request.Password;
+            entity.Phone = request.Phone;
+            entity.Rol = request.Rol;
+            entity.LinkPhoto = request.LinkPhoto;
+        }
     }
 }

@@ -3,7 +3,9 @@ using GestionTurnos.Application.Abstraction.Infrastructure;
 using GestionTurnos.Application.Mapper;
 using GestionTurnos.Application.Response;
 using GestionTurnos.Domain.Entities;
-using System.Linq;
+using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace GestionTurnos.Application.Services
 {
@@ -16,12 +18,9 @@ namespace GestionTurnos.Application.Services
             _branchRepository = branchRepository;
         }
 
-        public List<BranchResponse> GetByBusinessId( Guid businessId)
+        public Branch CreateBranch(Branch Branch)
         {
-            return _branchRepository.GetByBusinessId(businessId)
-                .OrderBy(x => x.Name)
-                .Select(x => x.ToBranchResponse())
-                .ToList();
+            return _branchRepository.Add(Branch);
         }
     }
 }

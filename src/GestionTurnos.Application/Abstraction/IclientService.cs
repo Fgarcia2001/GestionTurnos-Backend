@@ -1,17 +1,23 @@
-﻿using GestionTurnos.Domain.Entities;
+﻿using GestionTurnos.Application.Request;
+using GestionTurnos.Application.Response;
+using GestionTurnos.Domain.Entities;
 
 namespace GestionTurnos.Application.Abstraction
 {
     public interface IClientService 
     {
-        public List<Client> GetAll();
+        ClientsResponse CreateClient(ClientRequest request);
 
-        public List<Client> GetClientsOfBusiness(Guid businessId);
-        public Client GetById(Guid id);
+        List<ClientsResponse> GetClientsOfCurrentBusiness();
 
-        public Client CreateClient(Client client);
+        void UpdateClient(ClientRequest request, Guid id);
 
-        public void UpdateClient(Client client);
-        public void DeleteClient(Guid id);
+        void DeleteClient(Guid id);
+
+        List<GlobalClientResponse> GetAllGlobal();
+        ClientsResponse GetByName(string name);
+
+        ClientsResponse GetById(Guid id);
+
     }
 }

@@ -1,8 +1,10 @@
 ﻿using GestionTurnos.Application.Abstraction;
+using GestionTurnos.Application.Request;
+using GestionTurnos.Application.Response;
 using GestionTurnos.Domain.Entities;
+using GestionTurnos.Presentation.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-
-
 
 namespace GestionTurnos.Presentation.Controllers
 {
@@ -17,36 +19,40 @@ namespace GestionTurnos.Presentation.Controllers
             _businessService = businessService;
         }
 
-        [HttpGet]
-        public ActionResult<Business> GetAll()
+        
+        [HttpGet("global")]
+        public ActionResult<List<Business>> GetAllGlobal()
         {
-
-            return Ok(_businessService.GetAll());
+            return Ok(_businessService.GetAllGlobal());
         }
 
-        [HttpGet("{id}")]
-        public ActionResult<Business> GetById(Guid id)
+        
+
+
+
+        [Authorize(Roles = Policies.Admin)]
+        [HttpGet("/MyBusiness")] 
+        public ActionResult<BusinessDashboardResponse> GetMyBusinessWithEcosystem()
         {
-            return Ok(_businessService.GetById(id));
+
+            var businessEcosystem = _businessService.GetBusinessEcosystem();
+            return Ok(businessEcosystem);
         }
 
-        [HttpPost]
-        public ActionResult<Business> Post([FromBody] Business value)
+        [Authorize(Roles = Policies.Admin)]
+        [HttpPut("/MyBusiness/Update")]
+        public ActionResult UpdateMyBusiness([FromBody] BusinessUpdateRequest request)
         {
-            return Ok(_businessService.Create(value));
+            _businessService.Update(request);
+            return NoContent();
         }
 
-        [HttpPut("{id}")]
-        public ActionResult<bool> Update(Guid id, [FromBody] string value)
+        [HttpDelete("/MyBusiness/Delete")]
+        public ActionResult<bool> Delete()
         {
+            _businessService.Delete();
             return Ok(true);
         }
 
-        [HttpDelete("{id}")]
-        public ActionResult<bool> Delete(Guid id)
-        {
-            _businessService.Delete(id);
-            return Ok(true);
-        }
     }
 }

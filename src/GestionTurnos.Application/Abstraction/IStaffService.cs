@@ -1,22 +1,15 @@
-﻿
-
-using GestionTurnos.Application.Request;
-using GestionTurnos.Domain.Entities;
+﻿using GestionTurnos.Application.Request;
+using GestionTurnos.Application.Response;
 
 namespace GestionTurnos.Application.Abstraction
 {
     public interface IStaffService
     {
-        public List<Staff> GetAll();
-        public Staff GetById(Guid id);
-        
-        public List<Staff> GetStaffOfBusiness(Guid businessId);
-
-        public Staff CreateStaff(StaffRequest request, Guid Id_Business); 
-
-        public Staff UpdateStaff(StaffRequest staff, Guid idStaff);
-        public void DeleteStaff(Guid id);
-
-
+        List<StaffsResponse> GetStaffOfCurrentBusiness();
+        StaffsResponse GetById(Guid id);
+        StaffsResponse CreateStaff(StaffRequest request);
+        StaffsResponse UpdateStaff(StaffRequest staff, Guid idStaff);
+        void DeleteStaff(Guid id);
+        List<GlobalStaffResponse> GetAllGlobal();
     }
 }

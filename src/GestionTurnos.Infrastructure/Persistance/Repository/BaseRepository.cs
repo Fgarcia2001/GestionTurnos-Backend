@@ -1,4 +1,5 @@
 ﻿using GestionTurnos.Application.Abstraction.Infrastructure;
+using GestionTurnos.Application.Exceptions;
 using GestionTurnos.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +11,7 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
         protected readonly FMCTurnosDbContext _context;
         protected readonly DbSet<T> _dbSet;
 
+
         public BaseRepository(FMCTurnosDbContext context)
         {
             _context = context;
@@ -18,7 +20,7 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
         public virtual T Add(T entity)
         {
             _dbSet.Add(entity);
-            _context.SaveChanges();
+            SaveChanges();
             return entity;
         }
 
@@ -27,9 +29,11 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
             var EntityUpdate = _dbSet.FirstOrDefault(x => x.Id == id);
             if (EntityUpdate != null)
             {
-                EntityUpdate?.IsDeleted = true;
+                EntityUpdate.IsDeleted = true;
+                EntityUpdate.DeleteDateTime = DateTime.UtcNow;
+                EntityUpdate.UpdateDateTime = DateTime.UtcNow;
                 _dbSet.Update(EntityUpdate);
-                _context.SaveChanges();
+                SaveChanges();
             }
            
         }
@@ -46,8 +50,20 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
 
         public virtual void Update(T entity)
         {
-            _context.Set<T>().Update(entity);
-            _context.SaveChanges();
+            _dbSet.Update(entity);
+            SaveChanges();
+        }
+
+        protected void SaveChanges()
+        {
+            try
+            {
+                _context.SaveChanges();
+            }
+            catch (DbUpdateException ex)
+            {
+                throw new DatabaseException("Error al acceder a la base de datos.", ex);
+            }
         }
     }
 }
