@@ -2,6 +2,7 @@
 using GestionTurnos.Domain.Entities;
 using GestionTurnos.Infrastructure.Persistance;
 using GestionTurnos.Infrastructure.Persistance.Repository;
+using GestionTurnos.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 public class BusinessRepository : BaseRepository<Business>, IBusinessRepository
@@ -17,18 +18,17 @@ public class BusinessRepository : BaseRepository<Business>, IBusinessRepository
     {
         var currentTenantId = _tenantProvider.GetBusinessId();
 
-        return _context.Businesses
-                       .Include(b => b.Branches)
-                       .Include(b => b.Services)
-                       .Include(b => b.Clients)
-                       .FirstOrDefault(b => b.Id == currentTenantId && !b.IsDeleted);
+        return _dbSet.Include(b => b.Branches)
+                      .Include(b => b.Services)
+                      .Include(b => b.Clients)
+                      .FirstOrDefault(b => b.Id == currentTenantId && !b.IsDeleted);
     }
 
-    public List<Business> GetAllGlobal()
+    public override List<Business> GetAllGlobal()
     {
-        return _context.Businesses
-                       .IgnoreQueryFilters()
-                       .Where(b => !b.IsDeleted)
+        return _dbSet.Include(b => b.Branches) 
+                       .Include(b => b.Services)
+                       .Include(b => b.Clients)
                        .ToList();
     }
 }

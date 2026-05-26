@@ -17,7 +17,9 @@ namespace GestionTurnos.Application.Request
         public required string Phone { get; set; } = string.Empty;
         public string? LinkPhoto { get; set; } = string.Empty;
 
-        public Rol Rol { get; set; }
+        public required Rol Rol { get; set; }
+
+        public Guid? BranchId { get; set; }
 
     }
 }

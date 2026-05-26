@@ -17,6 +17,8 @@ namespace GestionTurnos.Application.Abstraction
         List<GlobalClientResponse> GetAllGlobal();
         ClientsResponse GetByName(string name);
 
+        ClientsResponse GetByEmail(string email);
+
         ClientsResponse GetById(Guid id);
 
     }

@@ -2,9 +2,11 @@ using GestionTurnos.Application.Abstraction;
 using GestionTurnos.Application.Abstraction.Infrastructure;
 using GestionTurnos.Application.Abstraction.Infrastructure.Auth;
 using GestionTurnos.Application.Services;
+using GestionTurnos.Infrastructure.BackgroundServices;
 using GestionTurnos.Infrastructure.ExternalServices;
 using GestionTurnos.Infrastructure.Persistance;
 using GestionTurnos.Infrastructure.Persistance.Repository;
+using GestionTurnos.Infrastructure.Persistence;
 using GestionTurnos.Presentation.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -24,11 +26,22 @@ builder.Services.AddScoped(typeof(BaseRepository<>), typeof(BaseRepository<>));
 builder.Services.AddScoped<IBusinessRepository, BusinessRepository>();
 builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
-builder.Services.AddScoped<IBusinessService, BusinessService>();
-builder.Services.AddScoped<IStaffService, StaffService>();
-builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IBranchRepository, BranchRepository>();
+builder.Services.AddScoped<IPlanRepository, PlanRepository>();
+builder.Services.AddScoped<IBusinessSubscriptionRepository,BusinessSubscriptionRepository>();
+
+builder.Services.AddScoped<IBusinessService, BusinessService>(); 
+builder.Services.AddScoped<IStaffService, StaffService>();
+builder.Services.AddScoped<IPlanService, PlanService>();
+builder.Services.AddScoped<IBusinessSubscriptionService, BusinessSubscriptionService>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITenantProvider, TenantProvider>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IEmailContentBuilder, EmailContentBuilder>();
+
+builder.Services.AddHostedService<SubscriptionWorker>();
+builder.Services.AddScoped<SubscriptionProcessor>();
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 

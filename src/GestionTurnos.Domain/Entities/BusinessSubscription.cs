@@ -5,11 +5,18 @@ using System.Text;
 
 namespace GestionTurnos.Domain.Entities
 {
+    public enum Status
+    {
+        Active,
+        Inactive,
+        Cancelled,
+        Expired
+    }
     public class BusinessSubscription : BaseEntity
     {   
         public Guid BusinessId { get; set; }
         public Business Business { get; set; } = null!;
-        public Guid PlanID { get; set; }
+        public Guid PlanId { get; set; }
         public Plan Plan { get; set; } = null!;
 
 

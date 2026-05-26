@@ -1,6 +1,7 @@
 ﻿using GestionTurnos.Application.Abstraction.Infrastructure;
 using GestionTurnos.Application.Exceptions;
 using GestionTurnos.Domain.Entities;
+using GestionTurnos.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestionTurnos.Infrastructure.Persistance.Repository
@@ -27,6 +28,10 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
         public virtual void Delete(Guid id)
         {
             var EntityUpdate = _dbSet.FirstOrDefault(x => x.Id == id);
+            if (EntityUpdate.IsDeleted == true)
+            {
+                throw new ConflictException("El registro ya se encuentra eliminado.");
+            }
             if (EntityUpdate != null)
             {
                 EntityUpdate.IsDeleted = true;
@@ -38,7 +43,7 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
            
         }
 
-        public virtual List<T> GetAll()
+        public virtual List<T> GetAllGlobal()
         {
             return _dbSet.Where(x => !x.IsDeleted).ToList();
         }

@@ -1,5 +1,7 @@
 ﻿using GestionTurnos.Application.Abstraction;
 using GestionTurnos.Application.Abstraction.Infrastructure;
+using GestionTurnos.Application.Exceptions;
+using GestionTurnos.Application.Mapper;
 using GestionTurnos.Application.Request;
 using GestionTurnos.Application.Response;
 using GestionTurnos.Domain.Entities;
@@ -24,56 +26,25 @@ namespace GestionTurnos.Application.Services
 
         public void Delete()
         {
-            var BusinesId = _tenantProvider.GetBusinessId(); 
+            var BusinesId = _tenantProvider.GetBusinessId() ?? throw new ConflictException("No se encontró la empresa.");
            
-            _businessRepository.Delete(BusinesId ?? Guid.Empty);
+            _businessRepository.Delete(BusinesId);
         }
 
-        public List<Business> GetAllGlobal()
+        public List<BusinessDashboardResponse> GetAllGlobal()
         {
-            return _businessRepository.GetAllGlobal();
+            return _businessRepository.GetAllGlobal()
+                .Select(b => b.ToResponse())
+                .ToList();
         }
 
         public BusinessDashboardResponse GetBusinessEcosystem()
         {
-            throw new NotImplementedException();
+            var business = _businessRepository.GetBusinessWithEcosystem()
+                ?? throw new ConflictException("No se encontró la configuración de su empresa.");
+
+            return business.ToResponse();
         }
-        /* public BusinessDashboardResponse GetBusinessEcosystem()
-         {
-
-             var business = _businessRepository.GetBusinessWithEcosystem()
-                 ?? throw new KeyNotFoundException("No se encontró la configuración de su empresa.");
-
-
-
-             return new BusinessDashboardResponse
-             {
-                 Id = business.Id,
-                 Name = business.Name,
-                 Branches = business.Branches.Select(b => new BranchResponse
-                 {
-                     Id = b.Id,
-                     Name = b.Name,
-                     Address = b.Address
-                 }).ToList(),
-                 Services = business.Services.Select(s => new ServiceResponse
-                 {
-                     Id = s.Id,
-                     Name = s.Name,
-                     Price = s.Price,
-                     DurationMinutes = s.Duration
-                 }).ToList(),
-                 Staff = business.Clients.Select(s => new StaffsResponse
-                 {
-                     IdStaff = s.Id,
-                     StaffName = s.Name,
-                     StaffEmail = s.Email,
-                     StaffLinkPhoto = s.LinkPhoto,
-                     StaffPhone = s.Phone,
-                     Rol = s.Rol
-                 }).ToList()
-             };
-         }*/
 
         public void Update(BusinessUpdateRequest value)
         {

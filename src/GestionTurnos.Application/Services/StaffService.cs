@@ -1,5 +1,6 @@
 ﻿using GestionTurnos.Application.Abstraction;
 using GestionTurnos.Application.Abstraction.Infrastructure;
+using GestionTurnos.Application.Exceptions;
 using GestionTurnos.Application.Mapper;
 using GestionTurnos.Application.Request;
 using GestionTurnos.Application.Response;
@@ -20,10 +21,15 @@ namespace GestionTurnos.Application.Services
 
         public StaffsResponse CreateStaff(StaffRequest request)
         {
+            var existingStaff = _staffRepository.GetAllGlobal().FirstOrDefault(s => s.Email == request.Email);
+            if (existingStaff != null)
+            {
+                throw new ConflictException("Ya existe un usuario con ese correo electrónico.");
+            }
             var IdBusiness = _tenantProvider.GetBusinessId()
-                ?? throw new InvalidOperationException("No se pudo determinar el comercio actual.");
+                ?? Guid.Empty;
             var newStaff = request.ToStaff();
-
+            
             newStaff.BusinessId = IdBusiness;
             _staffRepository.Add(newStaff);
 
@@ -47,7 +53,7 @@ namespace GestionTurnos.Application.Services
         public StaffsResponse UpdateStaff(StaffRequest request, Guid idStaff)
         {
             var existingStaff = _staffRepository.GetById(idStaff)
-                ?? throw new KeyNotFoundException("Usuario no encontrado.");
+                ?? throw new ConflictException("Usuario no encontrado.");
 
            
             existingStaff.UpdateFromDto(request);
@@ -59,7 +65,7 @@ namespace GestionTurnos.Application.Services
         public void DeleteStaff(Guid id)
         {
             var staff = _staffRepository.GetById(id)
-                ?? throw new KeyNotFoundException("Usuario no encontrado.");
+                ?? throw new ConflictException("Usuario no encontrado.");
             _staffRepository.Delete(id);
         }
 

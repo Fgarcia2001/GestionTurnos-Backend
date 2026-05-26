@@ -10,7 +10,7 @@ namespace GestionTurnos.Application.Response
         public string StaffLinkPhoto { get; set; } = string.Empty;
         public string StaffPhone { get; set; }
         public Rol Rol { get; set; }
-        public string BranchId { get; set; } = string.Empty;
+        public Guid BranchId { get; set; } 
         public string BranchName { get; set; } = string.Empty;
     }
 }

@@ -4,6 +4,7 @@ using GestionTurnos.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionTurnos.Infrastructure.Migrations
 {
     [DbContext(typeof(FMCTurnosDbContext))]
-    partial class FMCTurnosDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260523203146_InitialMigrationFMCturnifyV1")]
+    partial class InitialMigrationFMCturnifyV1
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,9 +49,8 @@ namespace GestionTurnos.Infrastructure.Migrations
                     b.Property<string>("Observation")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Payment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Payment")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");
@@ -59,9 +61,8 @@ namespace GestionTurnos.Infrastructure.Migrations
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("TotalCost")
                         .HasColumnType("decimal(18,2)");
@@ -130,9 +131,8 @@ namespace GestionTurnos.Infrastructure.Migrations
                     b.Property<DateTime?>("DeleteDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("IsActive")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("IsActive")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -142,9 +142,8 @@ namespace GestionTurnos.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("TypeBusiness")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TypeBusiness")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdateDateTime")
                         .HasColumnType("datetime2");
@@ -185,9 +184,8 @@ namespace GestionTurnos.Infrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdateDateTime")
                         .HasColumnType("datetime2");
@@ -286,9 +284,8 @@ namespace GestionTurnos.Infrastructure.Migrations
                     b.Property<Guid>("BranchId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("DayOfWeek")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DeleteDateTime")
                         .HasColumnType("datetime2");
@@ -356,7 +353,60 @@ namespace GestionTurnos.Infrastructure.Migrations
                     b.ToTable("Services");
                 });
 
-            modelBuilder.Entity("GestionTurnos.Domain.Entities.User", b =>
+            modelBuilder.Entity("GestionTurnos.Domain.Entities.Staff", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BranchId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BusinessId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("DeleteDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LinkPhoto")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Rol")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdateDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchId");
+
+                    b.HasIndex("BusinessId");
+
+                    b.ToTable("Staffs");
+                });
+
+            modelBuilder.Entity("GestionTurnos.Domain.Entities.SysAdminUser", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -376,6 +426,10 @@ namespace GestionTurnos.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -383,54 +437,9 @@ namespace GestionTurnos.Infrastructure.Migrations
                     b.Property<DateTime>("UpdateDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("UserType")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("nvarchar(8)");
-
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
-
-                    b.HasDiscriminator<string>("UserType").HasValue("User");
-
-                    b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("GestionTurnos.Domain.Entities.Staff", b =>
-                {
-                    b.HasBaseType("GestionTurnos.Domain.Entities.User");
-
-                    b.Property<Guid>("BranchId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BusinessId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("LinkPhoto")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Rol")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasIndex("BranchId");
-
-                    b.HasIndex("BusinessId");
-
-                    b.HasDiscriminator().HasValue("Staff");
-                });
-
-            modelBuilder.Entity("GestionTurnos.Domain.Entities.SysAdminUser", b =>
-                {
-                    b.HasBaseType("GestionTurnos.Domain.Entities.User");
-
-                    b.HasDiscriminator().HasValue("SysAdmin");
+                    b.ToTable("SysAdminUsers");
                 });
 
             modelBuilder.Entity("GestionTurnos.Domain.Entities.Appointment", b =>

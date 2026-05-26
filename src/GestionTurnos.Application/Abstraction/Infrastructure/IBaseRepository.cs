@@ -4,7 +4,7 @@ namespace GestionTurnos.Application.Abstraction.Infrastructure
 {
     public interface IBaseRepository<T> where T : BaseEntity
     {
-        List<T> GetAll();
+        List<T> GetAllGlobal();
         T? GetById(Guid Id);
         T Add(T entity);
         void Update(T entity);

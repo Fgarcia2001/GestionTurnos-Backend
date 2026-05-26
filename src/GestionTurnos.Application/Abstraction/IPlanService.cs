@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace GestionTurnos.Domain.Entities
+namespace GestionTurnos.Application.Abstraction
 {
-    public class SysAdminUser : User
+    public interface IPlanService
     {
     }
 }

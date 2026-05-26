@@ -1,5 +1,6 @@
 ﻿using GestionTurnos.Application.Abstraction;
 using GestionTurnos.Application.Abstraction.Infrastructure;
+using GestionTurnos.Application.Exceptions;
 using GestionTurnos.Application.Mapper;
 using GestionTurnos.Application.Request;
 using GestionTurnos.Application.Response;
@@ -11,7 +12,6 @@ namespace GestionTurnos.Application.Services
     {
         private readonly IClientRepository _clientRepository;
 
-        // Ya NO inyectamos _context ni _unitOfWork acá. El repositorio se encarga.
         public ClientService(IClientRepository clientRepository)
         {
             _clientRepository = clientRepository;
@@ -20,8 +20,8 @@ namespace GestionTurnos.Application.Services
         public ClientsResponse CreateClient(ClientRequest request)
         {
           
-            var client = request.ToEntity();
-         
+            var client = request.ToEntity(); // Mapper
+
             _clientRepository.Add(client);
 
             return client.ToResponse();
@@ -29,28 +29,35 @@ namespace GestionTurnos.Application.Services
 
         public List<ClientsResponse> GetClientsOfCurrentBusiness()
         {
-            var clients = _clientRepository.GetAll();
+            var clients = _clientRepository.GetAllGlobal();
             return clients.Select(c => c.ToResponse()).ToList();
         }
 
         public ClientsResponse GetById(Guid id)
         {
             var client = _clientRepository.GetById(id)
-                ?? throw new KeyNotFoundException("Cliente no encontrado o no pertenece a su comercio.");
+                ?? throw new ConflictException("Cliente no encontrado o no pertenece a su comercio.");
             return client.ToResponse();
         }
 
         public ClientsResponse GetByName(string name)
         {
             var client = _clientRepository.GetClientByName(name)
-                ?? throw new KeyNotFoundException("Cliente no encontrado en su comercio.");
+                ?? throw new ConflictException("Cliente no encontrado en su comercio.");
+            return client.ToResponse();
+        }
+
+        public ClientsResponse GetByEmail(string email)
+        {
+            var client = _clientRepository.GetClientByEmail(email)
+                ?? throw new ConflictException("Cliente no encontrado en su comercio.");
             return client.ToResponse();
         }
 
         public void UpdateClient(ClientRequest request, Guid id)
         {
             var existingClient = _clientRepository.GetById(id)
-                ?? throw new KeyNotFoundException("Cliente no encontrado.");
+                ?? throw new ConflictException("Cliente no encontrado.");
 
             
             existingClient.UpdateFromDto(request);
@@ -62,7 +69,11 @@ namespace GestionTurnos.Application.Services
         public void DeleteClient(Guid id)
         {
             var existingClient = _clientRepository.GetById(id)
-                ?? throw new KeyNotFoundException("Cliente no encontrado.");
+                ?? throw new ConflictException("Cliente no encontrado.");
+            if (existingClient.IsDeleted)
+            {
+                throw new ConflictException("El cliente ya se encuentra eliminado.");
+            }   
 
             _clientRepository.Delete(id);
         }
