@@ -9,7 +9,7 @@ namespace GestionTurnos.Application.Abstraction
         Business Create(Business business);
         void Delete();
 
-        List<Business> GetAllGlobal();
+        List<BusinessDashboardResponse> GetAllGlobal();
 
         BusinessDashboardResponse GetBusinessEcosystem();
 

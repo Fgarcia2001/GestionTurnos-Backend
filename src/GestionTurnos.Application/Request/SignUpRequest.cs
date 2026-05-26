@@ -26,5 +26,7 @@ namespace GestionTurnos.Application.Request
 
         [Phone]
         public required string BranchPhone { get; set; }
+
+        public Plan? Plan { get; set; } = null;
     }
 }

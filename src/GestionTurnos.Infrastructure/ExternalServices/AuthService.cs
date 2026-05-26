@@ -16,18 +16,23 @@ namespace GestionTurnos.Infrastructure.ExternalServices
     public class AuthService : IAuthService
     {
         private readonly IStaffRepository _staffRepository;
+        private readonly IPlanRepository _planRepository;
+        private readonly IBusinessSubscriptionRepository _BusinessSubscriptionRepository;
         private readonly IConfiguration _configuration;
 
-        public AuthService(IStaffRepository staffRepository, IConfiguration configuration)
+
+        public AuthService(IStaffRepository staffRepository, IPlanRepository planRepository, IBusinessSubscriptionRepository BusinessSubscriptionRepository, IConfiguration configuration)
         {
             _staffRepository = staffRepository;
+            _planRepository = planRepository;
+            _BusinessSubscriptionRepository = BusinessSubscriptionRepository;
             _configuration = configuration;
+
         }
 
-        // Registro de un nuevo negocio, nueva sucursal, se agrega el plan y su staff asociado (Admin) con devolución de token JWT
         public AuthResponse? SignUp(SignUpRequest request)
         {
-            bool emailExists = _staffRepository.GetAll().Any(s => s.Email == request.Email);
+            bool emailExists = _staffRepository.GetAllGlobal().Any(s => s.Email == request.Email);
             if (emailExists)
             {
                 throw new ConflictException("El correo electrónico ya está registrado.");
@@ -39,6 +44,12 @@ namespace GestionTurnos.Infrastructure.ExternalServices
                 //throw new BadRequestException($"La categoría de negocio '{request.BusinessCategory}' no es válida.");
             }
 
+            if(request.Plan == null)
+            {
+                request.Plan = _planRepository.GetAllGlobal().FirstOrDefault(p => p.Name == "Free Plan");
+            }
+
+
             var newBusiness = new Business
             {
                 Id = Guid.NewGuid(),
@@ -47,33 +58,46 @@ namespace GestionTurnos.Infrastructure.ExternalServices
                 TypeBusiness = typeBusinessParsed
             };
 
+            var BusinessSubscription = new BusinessSubscription
+            {
+                Id = Guid.NewGuid(),
+                BusinessId = newBusiness.Id,
+                Business = newBusiness,
+                PlanId = request.Plan.Id,
+                Plan = request.Plan,
+                StartDate = DateTime.UtcNow,
+                EndDate = DateTime.UtcNow + TimeSpan.FromDays(request.Plan.DurationDays),
+                Status = Status.Active
+            };
+
             var newBranch = new Branch
             {
                 Id = Guid.NewGuid(),
                 Address = request.Address,
                 Phone = request.BranchPhone,
                 BusinessId = newBusiness.Id,
+                Name = "Surcursal 1",
                 City = request.City,
                 Business = newBusiness
             };
 
-            // El rol de Admin se fuerza de manera interna y segura dentro del Mapper
             var newStaff = request.ToRegisterNewBusinessAndStaff(newBusiness, newBranch);
             _staffRepository.Add(newStaff);
+            _BusinessSubscriptionRepository.Add(BusinessSubscription);
 
             return new AuthResponse
             {
-                // Pasamos el ID del Staff y explícitamente el ID del negocio recién creado
+                
                 Token = GenerarToken(newStaff.Id, newStaff.Name, newStaff.Rol, newBusiness.Id),
             };
         }
 
         public AuthResponse? SignIn(SignInRequest request)
         {
-            var user = _staffRepository.GetAll().FirstOrDefault(s => s.Email == request.Email);
+            var user = _staffRepository.GetAllGlobal().FirstOrDefault(s => s.Email == request.Email);
             if (user == null)
             {
-                throw new Exception("Credenciales Incorrectas."); // O una excepción personalizada propia
+                throw new ConflictException("Credenciales Incorrectas."); 
             }
 
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))

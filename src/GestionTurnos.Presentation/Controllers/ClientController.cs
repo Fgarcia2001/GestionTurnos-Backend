@@ -1,4 +1,5 @@
 ﻿using GestionTurnos.Application.Abstraction;
+using GestionTurnos.Application.Exceptions;
 using GestionTurnos.Application.Request;
 using GestionTurnos.Application.Response;
 using GestionTurnos.Presentation.Authorization;
@@ -34,8 +35,19 @@ namespace GestionTurnos.Presentation.Controllers
         [HttpGet("{id}")] 
         public ActionResult<ClientsResponse> GetById([FromRoute] Guid id)
         {
+            try
+            {
             var client = _clientService.GetById(id);
             return Ok(client);
+            }
+            catch (ConflictException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Ocurrió un error inesperado.");
+            }
         }
 
         [HttpGet("search")] 
@@ -60,11 +72,21 @@ namespace GestionTurnos.Presentation.Controllers
             return NoContent();
         }
 
-        [HttpDelete("{id}")] 
+        [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute] Guid id)
         {
-            _clientService.DeleteClient(id);
-            return NoContent();
+            try
+            {
+                _clientService.DeleteClient(id);
+                return NoContent();
+            }catch (ConflictException ex)
+            {
+                return NotFound(ex.Message);
+            }   
+            catch (Exception)
+            {
+                return StatusCode(500, "Ocurrió un error inesperado.");
+            }
         }
     }
 }

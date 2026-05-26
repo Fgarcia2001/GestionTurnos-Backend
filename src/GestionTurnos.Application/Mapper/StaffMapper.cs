@@ -16,7 +16,8 @@ namespace GestionTurnos.Application.Mapper
                 Password = staffRequest.Password,
                 Phone = staffRequest.Phone,
                 Rol = staffRequest.Rol,
-                LinkPhoto = staffRequest.LinkPhoto
+                LinkPhoto = staffRequest.LinkPhoto ?? string.Empty,
+                BranchId = staffRequest.BranchId ?? Guid.Empty
             };
         }
 
@@ -29,7 +30,9 @@ namespace GestionTurnos.Application.Mapper
                 StaffEmail = entity.Email,
                 StaffPhone = entity.Phone,
                 Rol = entity.Rol,
-                StaffLinkPhoto = entity.LinkPhoto
+                StaffLinkPhoto = entity.LinkPhoto,
+                BranchId = entity.BranchId,
+                BranchName = entity.Branch?.Name ?? string.Empty,
             };
         }
 
@@ -55,7 +58,7 @@ namespace GestionTurnos.Application.Mapper
             entity.Password = request.Password;
             entity.Phone = request.Phone;
             entity.Rol = request.Rol;
-            entity.LinkPhoto = request.LinkPhoto;
+            entity.LinkPhoto = request.LinkPhoto ?? string.Empty;
         }
     }
 }

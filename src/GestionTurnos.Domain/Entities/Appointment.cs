@@ -30,11 +30,11 @@ namespace GestionTurnos.Domain.Entities
 
 
         public DateTime Day { get; set; }
-        public DateTime StartTime { get; set; }
-        public DateTime EndTime { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
         public string? Observation { get; set; }
         public PaymentMethod Payment { get; set; } 
         public AppointmentStatus Status { get; set; }
-        public double TotalCost { get; set; }
+        public decimal TotalCost { get; set; }
     }
 }

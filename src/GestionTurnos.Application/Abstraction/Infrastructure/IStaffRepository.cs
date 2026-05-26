@@ -4,7 +4,7 @@ namespace GestionTurnos.Application.Abstraction.Infrastructure
 {
     public interface IStaffRepository : IBaseRepository<Staff>
     {
-        public List<Staff> GetAllGlobal();
+        public List<Staff> GetAll();
 
     }
 

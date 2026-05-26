@@ -8,7 +8,6 @@ namespace GestionTurnos.Domain.Entities
 {
     public class Schedule : BaseEntity
     {
-            public Guid Id { get; set; }
             public Guid BranchId { get; set; } 
             public DayOfWeek DayOfWeek { get; set; } // Enum de C# (0 = Domingo, 1 = Lunes...)
             public TimeSpan StartTime { get; set; } 

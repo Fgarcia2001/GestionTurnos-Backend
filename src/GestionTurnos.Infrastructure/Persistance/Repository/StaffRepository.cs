@@ -1,21 +1,23 @@
 ﻿using GestionTurnos.Application.Abstraction.Infrastructure;
 using GestionTurnos.Domain.Entities;
+using GestionTurnos.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace GestionTurnos.Infrastructure.Persistance.Repository
 {
     public class StaffRepository : BaseRepository<Staff>, IStaffRepository
         {
-            public StaffRepository(FMCTurnosDbContext context) : base(context)
+        private readonly ITenantProvider _tenantProvider;
+        public StaffRepository(FMCTurnosDbContext context, ITenantProvider tenantProvider) : base(context)
             {
+                _tenantProvider = tenantProvider;
             }
 
-        public List<Staff> GetAllGlobal()
+        public List<Staff> GetAll()
         {
-            return _context.Staffs
-                           .IgnoreQueryFilters() 
-                           .Include(s => s.Business) 
-                           .ToList();
+            return _dbSet.Where(s =>s.BusinessId == _tenantProvider.GetBusinessId() && !s.IsDeleted)
+                .Include(s => s.Branch)
+                .ToList();
         }
     }
        

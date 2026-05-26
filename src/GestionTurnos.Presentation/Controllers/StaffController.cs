@@ -1,4 +1,5 @@
 ﻿using GestionTurnos.Application.Abstraction;
+using GestionTurnos.Application.Exceptions;
 using GestionTurnos.Application.Request;
 using GestionTurnos.Application.Response;
 using GestionTurnos.Domain.Entities;
@@ -24,28 +25,52 @@ namespace GestionTurnos.Presentation.Controllers
         [HttpGet("Business/Staffs")]
         public ActionResult<List<StaffsResponse>> GetStaffOfBusiness() 
         {
-            /*var ClaimBusinessId = HttpContext.User.Claims.Where(c => c.Type == "BusinessId");
-            if(ClaimBusinessId.ToString() != businessId.ToString())
+
+            try
             {
-                return Forbid();
-            }*/
-            return Ok(_staffService.GetStaffOfCurrentBusiness());
+                var staffs = _staffService.GetStaffOfCurrentBusiness();
+                return Ok(staffs);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Ocurrió un error inesperado y no se pudo obtener la lista de personal.");
+            }
         }
         [Authorize(Policy = Policies.Admin)]
         [HttpPost]
         public ActionResult<StaffsResponse> CreateStaff([FromBody] StaffRequest Staff)
         {
+            try { 
             var createdStaff = _staffService.CreateStaff(Staff);
             return Ok(createdStaff);
-
+            }
+            catch(ConflictException ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Ocurrió un error inesperado.");
+            }
         }
 
         [Authorize(Policy = Policies.Admin)]
         [HttpDelete("{id}")]
         public ActionResult DeleteStaff([FromRoute] Guid id)
         {
-            _staffService.DeleteStaff(id);
-            return NoContent();
+            try
+            {
+                _staffService.DeleteStaff(id);
+                return NoContent();
+            }
+            catch (ConflictException ex)
+            {
+                return StatusCode(409, ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Ocurrió un error inesperado.");
+            }
         }
 
         [Authorize(Policy = Policies.Admin)]

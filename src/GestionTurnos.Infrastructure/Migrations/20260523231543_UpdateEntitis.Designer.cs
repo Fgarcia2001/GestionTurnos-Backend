@@ -4,6 +4,7 @@ using GestionTurnos.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionTurnos.Infrastructure.Migrations
 {
     [DbContext(typeof(FMCTurnosDbContext))]
-    partial class FMCTurnosDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260523231543_UpdateEntitis")]
+    partial class UpdateEntitis
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -46,9 +49,8 @@ namespace GestionTurnos.Infrastructure.Migrations
                     b.Property<string>("Observation")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Payment")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Payment")
+                        .HasColumnType("int");
 
                     b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");
@@ -59,9 +61,8 @@ namespace GestionTurnos.Infrastructure.Migrations
                     b.Property<TimeSpan>("StartTime")
                         .HasColumnType("time");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<decimal>("TotalCost")
                         .HasColumnType("decimal(18,2)");
@@ -130,9 +131,8 @@ namespace GestionTurnos.Infrastructure.Migrations
                     b.Property<DateTime?>("DeleteDateTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("IsActive")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("IsActive")
+                        .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -142,9 +142,8 @@ namespace GestionTurnos.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("TypeBusiness")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TypeBusiness")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdateDateTime")
                         .HasColumnType("datetime2");
@@ -185,9 +184,8 @@ namespace GestionTurnos.Infrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdateDateTime")
                         .HasColumnType("datetime2");
@@ -286,9 +284,8 @@ namespace GestionTurnos.Infrastructure.Migrations
                     b.Property<Guid>("BranchId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("DayOfWeek")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("DeleteDateTime")
                         .HasColumnType("datetime2");
@@ -415,9 +412,8 @@ namespace GestionTurnos.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Rol")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Rol")
+                        .HasColumnType("int");
 
                     b.HasIndex("BranchId");
 
