@@ -27,5 +27,17 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             
             return null;
         }
+
+        public Guid? GetUserId()
+        {
+            var claimValue = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (Guid.TryParse(claimValue, out Guid userId))
+            {
+                return userId;
+            }
+
+            return null;
+        }
     } 
 }

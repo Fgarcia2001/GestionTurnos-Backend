@@ -3,5 +3,7 @@
     public interface ITenantProvider
     {
         Guid? GetBusinessId();
+
+        Guid? GetUserId();
     }
 }
