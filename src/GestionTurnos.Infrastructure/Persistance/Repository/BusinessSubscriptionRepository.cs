@@ -1,10 +1,7 @@
-﻿using GestionTurnos.Application.Abstraction.Infrastructure;
+using GestionTurnos.Application.Abstraction.Infrastructure;
 using GestionTurnos.Domain.Entities;
 using GestionTurnos.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace GestionTurnos.Infrastructure.Persistance.Repository
 {
@@ -21,11 +18,37 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
                 .Where(bs => bs.Status == Status.Active)
                 .ToListAsync();
         }
+
         public async Task UpdateAsync(BusinessSubscription entity)
         {
-
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
+        }
+
+        public List<BusinessSubscription> GetAllWithDetails()
+        {
+            return _dbSet
+                .Include(bs => bs.Business)
+                .Include(bs => bs.Plan)
+                .Where(bs => !bs.IsDeleted)
+                .ToList();
+        }
+
+        public BusinessSubscription? GetByIdWithDetails(Guid id)
+        {
+            return _dbSet
+                .Include(bs => bs.Business)
+                .Include(bs => bs.Plan)
+                .FirstOrDefault(bs => bs.Id == id);
+        }
+
+        public List<BusinessSubscription> GetByBusinessId(Guid businessId)
+        {
+            return _dbSet
+                .Include(bs => bs.Business)
+                .Include(bs => bs.Plan)
+                .Where(bs => bs.BusinessId == businessId && !bs.IsDeleted)
+                .ToList();
         }
     }
 }

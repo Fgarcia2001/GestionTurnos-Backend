@@ -1,4 +1,4 @@
-﻿using GestionTurnos.Domain.Entities;
+using GestionTurnos.Domain.Entities;
 
 namespace GestionTurnos.Presentation.Authorization
 {
@@ -9,5 +9,6 @@ namespace GestionTurnos.Presentation.Authorization
         public const string Admin = nameof(Rol.Admin);
         public const string Recepcionista = nameof(Rol.Recepcionista);
         public const string Profesional = nameof(Rol.Profesional);
+        public const string SysAdmin = "SysAdmin";
     }
 }

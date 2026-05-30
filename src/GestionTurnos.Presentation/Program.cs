@@ -58,6 +58,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(Policies.Admin, policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
     options.AddPolicy(Policies.Recepcionista, policy => policy.RequireClaim(ClaimTypes.Role, "Recepcionista"));
     options.AddPolicy(Policies.Profesional, policy => policy.RequireClaim(ClaimTypes.Role, "Profesional"));
+    options.AddPolicy(Policies.SysAdmin, policy => policy.RequireClaim(ClaimTypes.Role, "SysAdmin"));
 });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
        .AddJwtBearer(options => {
