@@ -37,6 +37,7 @@ builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IBranchService, BranchService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IBusinessSubscriptionService, BusinessSubscriptionService>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
