@@ -22,8 +22,10 @@ namespace GestionTurnos.Infrastructure.ExternalServices
         private readonly IBusinessSubscriptionRepository _BusinessSubscriptionRepository;
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
+        private readonly IBranchService _branchService;
         private readonly IEmailContentBuilder _emailContentBuilder;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IScheduleService _scheduleService;
 
 
         public AuthService(IStaffRepository staffRepository, 
@@ -31,6 +33,8 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             IBusinessSubscriptionRepository BusinessSubscriptionRepository,
             IConfiguration configuration, IEmailService emailService,
             IEmailContentBuilder emailContentBuilder,
+            IBranchService branchService,   
+            IScheduleService scheduleService,
             IHttpContextAccessor httpContextAccessor)
         {
             _staffRepository = staffRepository;
@@ -38,8 +42,10 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             _BusinessSubscriptionRepository = BusinessSubscriptionRepository;
             _configuration = configuration;
             _emailService = emailService;
+            _branchService = branchService;
             _emailContentBuilder = emailContentBuilder;
             _httpContextAccessor = httpContextAccessor;
+            _scheduleService = scheduleService;
         }
 
         public AuthResponse? SignUp(SignUpRequest request)
@@ -82,16 +88,7 @@ namespace GestionTurnos.Infrastructure.ExternalServices
                 Status = Status.Active
             };
 
-            var newBranch = new Branch
-            {
-                Id = Guid.NewGuid(),
-                Address = request.Address,
-                Phone = request.BranchPhone,
-                BusinessId = newBusiness.Id,
-                Name = "Surcursal 1",
-                City = request.City,
-                Business = newBusiness
-            };
+            var newBranch = _branchService.CreateInitialBranch(request, newBusiness);
 
             var newStaff = request.ToRegisterNewBusinessAndStaff(newBusiness, newBranch);
             _staffRepository.Add(newStaff);
@@ -191,7 +188,7 @@ namespace GestionTurnos.Infrastructure.ExternalServices
         }
 
 
-        private string GenerarToken(Guid userId, string nameStaff, Rol rol, Guid? businessId)
+        private string GenerarToken(Guid userId, string nameStaff, Rol? rol, Guid? businessId)
         {
             string key = _configuration["Jwt:Key"]!;
             string issuer = _configuration["Jwt:Issuer"]!;
@@ -206,7 +203,7 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             {
                 new Claim(JwtRegisteredClaimNames.Sub, userId.ToString()), 
                 new Claim(JwtRegisteredClaimNames.Name, nameStaff),
-                new Claim(ClaimTypes.Role, rol.ToString()),
+                new Claim(ClaimTypes.Role, rol?.ToString() ?? "SysAdmin"),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
             };

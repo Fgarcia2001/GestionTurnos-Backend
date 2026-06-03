@@ -30,18 +30,21 @@ builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IBranchRepository, BranchRepository>();
 builder.Services.AddScoped<IPlanRepository, PlanRepository>();
 builder.Services.AddScoped<IBusinessSubscriptionRepository,BusinessSubscriptionRepository>();
+builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 
 builder.Services.AddScoped<IBusinessService, BusinessService>(); 
 builder.Services.AddScoped<IStaffService, StaffService>();
 builder.Services.AddScoped<IBranchService, BranchService>();
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IPlanService, PlanService>();
+builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IBusinessSubscriptionService, BusinessSubscriptionService>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ITenantProvider, TenantProvider>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IEmailContentBuilder, EmailContentBuilder>();
+
 
 builder.Services.AddHostedService<SubscriptionWorker>();
 builder.Services.AddScoped<SubscriptionProcessor>();
@@ -58,6 +61,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(Policies.Admin, policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
     options.AddPolicy(Policies.Recepcionista, policy => policy.RequireClaim(ClaimTypes.Role, "Recepcionista"));
     options.AddPolicy(Policies.Profesional, policy => policy.RequireClaim(ClaimTypes.Role, "Profesional"));
+    options.AddPolicy(Policies.SysAdmin, policy => policy.RequireClaim(ClaimTypes.Role, "SysAdmin"));
 });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
        .AddJwtBearer(options => {
@@ -74,7 +78,17 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                RoleClaimType = "role"
            };
        });
-    
+
+builder.Services.AddCors(options => // NO LE DEN PELOTA A ESTO ES PARA PROBAR TODO EN EL FRONT Y BACK
+{
+    options.AddPolicy("ReactPolicy", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
 
@@ -84,7 +98,7 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
 }
-
+app.UseCors("ReactPolicy");
 app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
