@@ -50,25 +50,6 @@ namespace GestionTurnos.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Schedules",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    DayOfWeek = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    EndTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    SlotDurationMinutes = table.Column<int>(type: "int", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    UpdateDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeleteDateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Schedules", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Branches",
                 columns: table => new
                 {
@@ -119,32 +100,6 @@ namespace GestionTurnos.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Services",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Categoria = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Duration = table.Column<int>(type: "int", nullable: false),
-                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
-                    UpdateDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    DeleteDateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Services", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Services_Businesses_BusinessId",
-                        column: x => x.BusinessId,
-                        principalTable: "Businesses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "BusinessSubscriptions",
                 columns: table => new
                 {
@@ -176,6 +131,63 @@ namespace GestionTurnos.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Schedules",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DayOfWeek = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    EndTime = table.Column<TimeSpan>(type: "time", nullable: false),
+                    SlotDurationMinutes = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    UpdateDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeleteDateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Schedules", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Schedules_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Services",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Categoria = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Duration = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    UpdateDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DeleteDateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Services", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Services_Branches_BranchId",
+                        column: x => x.BranchId,
+                        principalTable: "Branches",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Services_Businesses_BusinessId",
+                        column: x => x.BusinessId,
+                        principalTable: "Businesses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -183,12 +195,13 @@ namespace GestionTurnos.Infrastructure.Migrations
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserType = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     BusinessId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     BranchId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     LinkPhoto = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Rol = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BranchId1 = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     UpdateDateTime = table.Column<DateTime>(type: "datetime2", nullable: false),
                     DeleteDateTime = table.Column<DateTime>(type: "datetime2", nullable: true)
@@ -202,6 +215,11 @@ namespace GestionTurnos.Infrastructure.Migrations
                         principalTable: "Branches",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Users_Branches_BranchId1",
+                        column: x => x.BranchId1,
+                        principalTable: "Branches",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Users_Businesses_BusinessId",
                         column: x => x.BusinessId,
@@ -288,6 +306,16 @@ namespace GestionTurnos.Infrastructure.Migrations
                 column: "BusinessId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Schedules_BranchId",
+                table: "Schedules",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Services_BranchId",
+                table: "Services",
+                column: "BranchId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Services_BusinessId",
                 table: "Services",
                 column: "BusinessId");
@@ -296,6 +324,11 @@ namespace GestionTurnos.Infrastructure.Migrations
                 name: "IX_Users_BranchId",
                 table: "Users",
                 column: "BranchId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_BranchId1",
+                table: "Users",
+                column: "BranchId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_BusinessId",

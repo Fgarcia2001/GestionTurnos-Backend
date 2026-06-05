@@ -35,6 +35,8 @@ namespace GestionTurnos.Domain.Entities
         public string? Observation { get; set; }
         public PaymentMethod Payment { get; set; } 
         public AppointmentStatus Status { get; set; }
+
+        //[Column(TypeName = "decimal(18,2)")]
         public decimal TotalCost { get; set; }
     }
 }

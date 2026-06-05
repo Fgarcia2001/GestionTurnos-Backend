@@ -20,11 +20,6 @@ namespace GestionTurnos.Domain.Entities
         public Guid BranchId { get; set; }
         public  Branch Branch { get; set; } = null;
 
-        private string _password = string.Empty;
-
-        public string Password {
-            get => _password; set => _password = BCrypt.Net.BCrypt.HashPassword(value); 
-        }
         public string LinkPhoto { get; set; } = string.Empty;
 
         public Rol Rol { get; set; }

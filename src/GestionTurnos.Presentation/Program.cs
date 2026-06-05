@@ -29,10 +29,11 @@ builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 builder.Services.AddScoped<IClientRepository, ClientRepository>();
 builder.Services.AddScoped<IBranchRepository, BranchRepository>();
 builder.Services.AddScoped<IPlanRepository, PlanRepository>();
-builder.Services.AddScoped<IBusinessSubscriptionRepository,BusinessSubscriptionRepository>();
+builder.Services.AddScoped<IBusinessSubscriptionRepository, BusinessSubscriptionRepository>();
 builder.Services.AddScoped<IScheduleRepository, ScheduleRepository>();
 builder.Services.AddScoped<IServiceRepository, ServiceRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<ISysAdminRepository, SysAdminRepository>();
 
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<IBusinessService, BusinessService>();
@@ -43,6 +44,7 @@ builder.Services.AddScoped<IPlanService, PlanService>();
 builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IBusinessSubscriptionService, BusinessSubscriptionService>();
 builder.Services.AddScoped<IServiceService, ServiceService>();
+builder.Services.AddScoped<ISysAdminService, SysAdminService>();
 
 
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -69,7 +71,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(Policies.SysAdmin, policy => policy.RequireClaim(ClaimTypes.Role, "SysAdmin"));
 });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-       .AddJwtBearer(options => {
+       .AddJwtBearer(options =>
+       {
            options.TokenValidationParameters = new TokenValidationParameters
            {
                ValidateIssuerSigningKey = true,
@@ -108,7 +111,7 @@ app.UseMiddleware<GlobalExceptionHandlerMiddleware>();
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication(); 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

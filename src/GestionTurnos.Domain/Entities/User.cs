@@ -13,5 +13,12 @@ namespace GestionTurnos.Domain.Entities
         public required string Email { get; set; } = string.Empty;
         [Phone]
         public required string Phone { get; set; } = string.Empty;
+
+        private string _password = string.Empty;
+
+        public string Password
+        {
+            get => _password; set => _password = BCrypt.Net.BCrypt.HashPassword(value);
+        }
     }
 }

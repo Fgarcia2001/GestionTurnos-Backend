@@ -26,6 +26,7 @@ namespace GestionTurnos.Infrastructure.ExternalServices
         private readonly IEmailContentBuilder _emailContentBuilder;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IScheduleService _scheduleService;
+        private readonly ISysAdminService _sysAdminService;
 
 
         public AuthService(IStaffRepository staffRepository, 
@@ -35,7 +36,9 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             IEmailContentBuilder emailContentBuilder,
             IBranchService branchService,   
             IScheduleService scheduleService,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            ISysAdminService sysAdminService
+            )
         {
             _staffRepository = staffRepository;
             _planRepository = planRepository;
@@ -46,6 +49,7 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             _emailContentBuilder = emailContentBuilder;
             _httpContextAccessor = httpContextAccessor;
             _scheduleService = scheduleService;
+            _sysAdminService = sysAdminService;
         }
 
         public AuthResponse? SignUp(SignUpRequest request)
@@ -111,21 +115,51 @@ namespace GestionTurnos.Infrastructure.ExternalServices
 
         public AuthResponse? SignIn(SignInRequest request)
         {
-            var user = _staffRepository.GetAllGlobal().FirstOrDefault(s => s.Email == request.Email);
-            if (user == null)
+            var user = _staffRepository
+      .GetAllGlobal()
+      .FirstOrDefault(s => s.Email == request.Email);
+
+            var sysAdmin = _sysAdminService.GetByEmail(request.Email);
+
+            // No existe ningún usuario
+            if (user == null && sysAdmin == null)
             {
-                throw new ConflictException("Credenciales Incorrectas."); 
+                throw new ConflictException("Credenciales Incorrectas.");
             }
 
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+            // Login Staff
+            if (user != null)
             {
-                return null;
+                if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+                {
+                    throw new ConflictException("Credenciales Incorrectas.");
+                }
+
+                return new AuthResponse
+                {
+                    Token = GenerarToken(
+                        user.Id,
+                        user.Name,
+                        user.Rol,
+                        user.BusinessId,
+                        user.BranchId)
+                };
+            }
+
+            // Login SysAdmin
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, sysAdmin.Password))
+            {
+                throw new ConflictException("Credenciales Incorrectas.");
             }
 
             return new AuthResponse
             {
-                
-                Token = GenerarToken(user.Id, user.Name, user.Rol, user.BusinessId, user.BranchId),
+                Token = GenerarToken(
+                    sysAdmin.Id,
+                    sysAdmin.Name,
+                    null,
+                    null,
+                    null)
             };
         }
 

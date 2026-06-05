@@ -1,4 +1,4 @@
-﻿using GestionTurnos.Application.Abstraction;
+using GestionTurnos.Application.Abstraction;
 using GestionTurnos.Application.Abstraction.Infrastructure;
 using GestionTurnos.Application.Request;
 using GestionTurnos.Application.Response;
@@ -28,7 +28,7 @@ namespace GestionTurnos.Presentation.Controllers
 
             return Ok(_staffService.GetStaffOfCurrentBusiness());
         }
-        
+
         [Authorize(Policy = "SysAdmin")]
         [HttpGet("{id}")]
         public ActionResult<GlobalStaffResponse> GetById(Guid id)
