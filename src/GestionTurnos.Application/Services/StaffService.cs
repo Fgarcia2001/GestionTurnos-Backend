@@ -77,11 +77,8 @@ namespace GestionTurnos.Application.Services
 
         public Staff GetByEmail(string email)
         {
-            var staff = _staffRepository.GetByEmail(email);
-            if(staff == null)
-            {
-                throw new KeyNotFoundException("Usuario no encontrado.");
-            }
+            var staff = _staffRepository.GetByEmail(email) ?? null;
+            
             return staff;
         }
     }

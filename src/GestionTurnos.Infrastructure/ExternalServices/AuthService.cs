@@ -29,6 +29,7 @@ namespace GestionTurnos.Infrastructure.ExternalServices
         private readonly IBusinessService _businessService;
         private readonly IBusinessSubscriptionService _businessSubscriptionService;
         private readonly IStaffService _staffService;
+        private readonly IPlanService _planService;
 
         public AuthService(IStaffRepository staffRepository, 
             IConfiguration configuration, IEmailService emailService,
@@ -39,7 +40,8 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             ISysAdminService sysAdminService,
             IBusinessService businessService,
             IBusinessSubscriptionService businessSubscriptionService,
-            IStaffService staffService)
+            IStaffService staffService,
+            IPlanService planService)
             
 
         {
@@ -54,6 +56,7 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             _businessService = businessService;
             _businessSubscriptionService = businessSubscriptionService;
             _staffService = staffService;
+            _planService = planService;
 
         }
 
@@ -71,19 +74,8 @@ namespace GestionTurnos.Infrastructure.ExternalServices
                 //throw new BadRequestException($"La categoría de negocio '{request.BusinessCategory}' no es válida.");
             }
 
-           /* if(request.Plan == null || request.Plan.Id == Guid.Empty)
-            {
-                request.Plan = _planRepository.GetAllGlobal().FirstOrDefault(p => p.Name == "Free Plan")
-                    ?? _planRepository.GetAllGlobal().FirstOrDefault(); // Agarra el primero si no hay "Free Plan"
-                    
-                if (request.Plan == null) 
-                    throw new ConflictException("No hay ningún plan cargado en la base de datos.");
-            }
-            else
-            {
-                request.Plan = _planRepository.GetAllGlobal().FirstOrDefault(p => p.Id == request.Plan.Id)
-                    ?? throw new ConflictException("El plan especificado no existe.");
-            }*/
+
+            var selectedPlan = _planService.GetPlanOrDefault(request.Plan?.Id);
 
             var newBusiness = _businessService.initialBusiness(request, typeBusinessParsed);
 
@@ -91,7 +83,7 @@ namespace GestionTurnos.Infrastructure.ExternalServices
 
             var newStaff = request.ToRegisterNewBusinessAndStaff(newBusiness, newBranch);
             _staffRepository.Add(newStaff);
-            _businessSubscriptionService.InitialBusinessSubscription(request,newBusiness);
+            _businessSubscriptionService.InitialBusinessSubscription(selectedPlan,newBusiness);
             
 
             return new AuthResponse

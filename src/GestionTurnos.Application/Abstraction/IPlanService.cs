@@ -1,5 +1,6 @@
 using GestionTurnos.Application.Request;
 using GestionTurnos.Application.Response;
+using GestionTurnos.Domain.Entities;
 
 namespace GestionTurnos.Application.Abstraction
 {
@@ -10,5 +11,7 @@ namespace GestionTurnos.Application.Abstraction
         PlanResponse Create(PlanRequest request);
         PlanResponse Update(PlanRequest request, Guid id);
         void Delete(Guid id);
+
+        Plan GetPlanOrDefault(Guid? planId);
     }
 }

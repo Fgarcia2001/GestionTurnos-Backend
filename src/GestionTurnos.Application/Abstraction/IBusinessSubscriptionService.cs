@@ -12,6 +12,6 @@ namespace GestionTurnos.Application.Abstraction
         BusinessSubscriptionResponse Create(BusinessSubscriptionRequest request);
         BusinessSubscriptionResponse UpdateStatus(Guid id, string status);
         void Delete(Guid id);
-        void InitialBusinessSubscription(SignUpRequest request, Business newBusiness);
+        void InitialBusinessSubscription(Plan plan, Business newBusiness);
     }
 }

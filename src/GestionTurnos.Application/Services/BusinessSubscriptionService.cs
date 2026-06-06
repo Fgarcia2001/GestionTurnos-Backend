@@ -75,17 +75,17 @@ namespace GestionTurnos.Application.Services
         }
 
 
-        public void InitialBusinessSubscription(SignUpRequest request, Business newBusiness)
+        public void InitialBusinessSubscription(Plan plan, Business newBusiness)
         {
             var BusinessSubscription = new BusinessSubscription
             {
                 Id = Guid.NewGuid(),
                 BusinessId = newBusiness.Id,
                 Business = newBusiness,
-                PlanId = request.Plan.Id,
-                Plan = request.Plan,
+                PlanId = plan.Id,
+                Plan = plan,
                 StartDate = DateTime.UtcNow,
-                EndDate = DateTime.UtcNow + TimeSpan.FromDays(request.Plan.DurationDays),
+                EndDate = DateTime.UtcNow + TimeSpan.FromDays(plan.DurationDays),
                 Status = Status.Active
             };
             _subscriptionRepository.Add(BusinessSubscription);

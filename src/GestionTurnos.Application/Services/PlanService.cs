@@ -4,6 +4,7 @@ using GestionTurnos.Application.Exceptions;
 using GestionTurnos.Application.Mapper;
 using GestionTurnos.Application.Request;
 using GestionTurnos.Application.Response;
+using GestionTurnos.Domain.Entities;
 
 namespace GestionTurnos.Application.Services
 {
@@ -55,6 +56,20 @@ namespace GestionTurnos.Application.Services
                 ?? throw new ConflictException("Plan no encontrado.");
 
             _planRepository.Delete(id);
+        }
+
+        public Plan GetPlanOrDefault(Guid? planId)
+        {
+            if (!planId.HasValue || planId == Guid.Empty)
+            {
+                return _planRepository.GetAllGlobal()
+                    .FirstOrDefault(p => p.Name == "Free Plan")
+                    ?? _planRepository.GetAllGlobal().FirstOrDefault()
+                    ?? throw new ConflictException("No se encontro plan.");
+            }
+
+            return _planRepository.GetById(planId.Value)
+                ?? throw new ConflictException("El plan especificado no existe");
         }
     }
 }
