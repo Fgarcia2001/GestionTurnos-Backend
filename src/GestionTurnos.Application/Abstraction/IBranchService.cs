@@ -14,7 +14,7 @@ namespace GestionTurnos.Application.Abstraction
 
         public Branch CreateInitialBranch(SignUpRequest request, Business newBusiness);
 
-        public InfoBranchResponse GetInfoBranch(Guid idBusiness, Guid idBranch);
+        public InfoBranchResponse GetInfoBranch(Guid idBranch);
 
 
     }

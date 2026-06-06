@@ -26,7 +26,7 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
                 .ToList();
         }
 
-        public Branch? GetInfoBranch(Guid businessId, Guid branchId)
+        public Branch? GetInfoBranch( Guid branchId)
         {
             return _dbSet
     
@@ -35,7 +35,7 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
                 .Include(b => b.Staff.Where(s => !s.IsDeleted))
                 
                 .Include(b => b.Services.Where(s => !s.IsDeleted))
-                .FirstOrDefault(b => b.Id == branchId && b.BusinessId == businessId && !b.IsDeleted);
+                .FirstOrDefault(b => b.Id == branchId  && !b.IsDeleted);
         }
     }
 }

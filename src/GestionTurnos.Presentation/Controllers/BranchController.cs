@@ -57,11 +57,11 @@ namespace GestionTurnos.Presentation.Controllers
             }
         }
         [AllowAnonymous]
-        [HttpGet("InfoBranch/{idBusiness}/{idBranch}")]
-        public ActionResult<BranchResponse> GetInfoBranch([FromRoute] Guid idBusiness, [FromRoute] Guid idBranch)
+        [HttpGet("InfoBranch/{idBranch}")]
+        public ActionResult<BranchResponse> GetInfoBranch( [FromRoute] Guid idBranch)
         {
             
-                var branch = _branchService.GetInfoBranch(idBusiness, idBranch);
+                var branch = _branchService.GetInfoBranch(idBranch);
                 return Ok(branch);
            
         }

@@ -108,10 +108,10 @@ namespace GestionTurnos.Application.Services
         }
 
 
-        public InfoBranchResponse GetInfoBranch(Guid idBusiness, Guid idBranch)
+        public InfoBranchResponse GetInfoBranch(Guid idBranch)
         {
-            var businessExisting = _businessService.GetById(idBusiness) ?? throw new ConflictException("Empresa no encontrada.");
-            var branch = _branchRepository.GetInfoBranch(idBusiness, idBranch)
+            
+            var branch = _branchRepository.GetInfoBranch( idBranch)
                 ?? throw new ConflictException("Sucursal no encontrada.");
 
             return branch.ToInfoBranchResponse();
