@@ -19,8 +19,6 @@ namespace GestionTurnos.Infrastructure.ExternalServices
     public class AuthService : IAuthService
     {
         private readonly IStaffRepository _staffRepository;
-        private readonly IPlanRepository _planRepository;
-        private readonly IBusinessSubscriptionRepository _BusinessSubscriptionRepository;
         private readonly IConfiguration _configuration;
         private readonly IEmailService _emailService;
         private readonly IBranchService _branchService;
@@ -30,7 +28,7 @@ namespace GestionTurnos.Infrastructure.ExternalServices
         private readonly ISysAdminService _sysAdminService;
         private readonly IBusinessService _businessService;
         private readonly IBusinessSubscriptionService _businessSubscriptionService;
-
+        private readonly IStaffService _staffService;
 
         public AuthService(IStaffRepository staffRepository, 
             IConfiguration configuration, IEmailService emailService,
@@ -40,8 +38,10 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             IHttpContextAccessor httpContextAccessor,
             ISysAdminService sysAdminService,
             IBusinessService businessService,
-            IBusinessSubscriptionService businessSubscriptionService)
+            IBusinessSubscriptionService businessSubscriptionService,
+            IStaffService staffService)
             
+
         {
             _staffRepository = staffRepository;
             _configuration = configuration;
@@ -53,11 +53,13 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             _sysAdminService = sysAdminService;
             _businessService = businessService;
             _businessSubscriptionService = businessSubscriptionService;
+            _staffService = staffService;
+
         }
 
         public AuthResponse? SignUp(SignUpRequest request)
         {
-            bool emailExists = _staffRepository.GetAllGlobal().Any(s => s.Email == request.Email);
+            bool emailExists = _staffService.GetByEmail(request.Email) != null;
             if (emailExists)
             {
                 throw new ConflictException("El correo electrónico ya está registrado.");
@@ -69,7 +71,7 @@ namespace GestionTurnos.Infrastructure.ExternalServices
                 //throw new BadRequestException($"La categoría de negocio '{request.BusinessCategory}' no es válida.");
             }
 
-            if(request.Plan == null || request.Plan.Id == Guid.Empty)
+           /* if(request.Plan == null || request.Plan.Id == Guid.Empty)
             {
                 request.Plan = _planRepository.GetAllGlobal().FirstOrDefault(p => p.Name == "Free Plan")
                     ?? _planRepository.GetAllGlobal().FirstOrDefault(); // Agarra el primero si no hay "Free Plan"
@@ -81,7 +83,7 @@ namespace GestionTurnos.Infrastructure.ExternalServices
             {
                 request.Plan = _planRepository.GetAllGlobal().FirstOrDefault(p => p.Id == request.Plan.Id)
                     ?? throw new ConflictException("El plan especificado no existe.");
-            }
+            }*/
 
             var newBusiness = _businessService.initialBusiness(request, typeBusinessParsed);
 
@@ -101,7 +103,7 @@ namespace GestionTurnos.Infrastructure.ExternalServices
 
         public AuthResponse? SignIn(SignInRequest request)
         {
-            var user = _staffRepository.GetAllGlobal().FirstOrDefault(s => s.Email == request.Email);
+            var user = _staffService.GetByEmail(request.Email);
 
             var sysAdmin = _sysAdminService.GetByEmail(request.Email);
 

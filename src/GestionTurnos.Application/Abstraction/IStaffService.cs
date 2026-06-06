@@ -1,5 +1,6 @@
 ﻿using GestionTurnos.Application.Request;
 using GestionTurnos.Application.Response;
+using GestionTurnos.Domain.Entities;
 
 namespace GestionTurnos.Application.Abstraction
 {
@@ -11,5 +12,7 @@ namespace GestionTurnos.Application.Abstraction
         StaffsResponse UpdateStaff(StaffRequest staff, Guid idStaff);
         void DeleteStaff(Guid id);
         List<GlobalStaffResponse> GetAllGlobal();
+
+        Staff GetByEmail(string email);
     }
 }

@@ -74,5 +74,15 @@ namespace GestionTurnos.Application.Services
             var globalList = _staffRepository.GetAllGlobal();
             return globalList.Select(s => s.ToGlobalResponse()).ToList();
         }
+
+        public Staff GetByEmail(string email)
+        {
+            var staff = _staffRepository.GetByEmail(email);
+            if(staff == null)
+            {
+                throw new KeyNotFoundException("Usuario no encontrado.");
+            }
+            return staff;
+        }
     }
 }

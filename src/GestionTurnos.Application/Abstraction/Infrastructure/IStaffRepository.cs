@@ -6,6 +6,8 @@ namespace GestionTurnos.Application.Abstraction.Infrastructure
     {
         public List<Staff> GetAll();
 
+        public Staff GetByEmail(string email);
+
     }
 
 }

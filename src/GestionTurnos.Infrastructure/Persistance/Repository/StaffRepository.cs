@@ -19,6 +19,11 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
                 .Include(s => s.Branch)
                 .ToList();
         }
+
+        public Staff GetByEmail(string email)
+        {
+            return _dbSet.FirstOrDefault(s => s.Email == email  && !s.IsDeleted);
+        }
     }
        
     
