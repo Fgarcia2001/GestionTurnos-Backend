@@ -21,9 +21,8 @@ namespace GestionTurnos.Application.Services
 
         public SysAdminUser GetByEmail(string email)
         {
-            var sysAdmin = _sysAdminRepository.GetByEmail(email);
-            if (sysAdmin == null)
-                return null;
+            var sysAdmin = _sysAdminRepository.GetByEmail(email) ?? null;
+
             return sysAdmin;
         }
     }

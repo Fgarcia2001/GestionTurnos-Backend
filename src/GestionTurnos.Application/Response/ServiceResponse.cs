@@ -1,3 +1,5 @@
+using System.Runtime.CompilerServices;
+
 namespace GestionTurnos.Application.Response
 {
     public class ServiceBusinessResponse
@@ -9,5 +11,6 @@ namespace GestionTurnos.Application.Response
         public string Description { get; set; } = string.Empty;
         public int Duration { get; set; }
         public decimal Price { get; set; }
+        public decimal? PriceUSD { get; set; }
     }
 }

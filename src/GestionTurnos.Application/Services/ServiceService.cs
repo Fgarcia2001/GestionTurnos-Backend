@@ -1,5 +1,6 @@
 using GestionTurnos.Application.Abstraction;
 using GestionTurnos.Application.Abstraction.Infrastructure;
+using GestionTurnos.Application.Abstraction.Infrastructure.External_Interface;
 using GestionTurnos.Application.Exceptions;
 using GestionTurnos.Application.Mapper;
 using GestionTurnos.Application.Request;
@@ -11,22 +12,33 @@ namespace GestionTurnos.Application.Services
     {
         private readonly IServiceRepository _serviceRepository;
         private readonly ITenantProvider _tenantProvider;
+        private readonly IDolarPriceService _dolarPriceService;
 
-        public ServiceService(IServiceRepository serviceRepository, ITenantProvider tenantProvider)
+        public ServiceService(IServiceRepository serviceRepository, ITenantProvider tenantProvider, IDolarPriceService dolarPriceService)
         {
             _serviceRepository = serviceRepository;
             _tenantProvider = tenantProvider;
+            _dolarPriceService = dolarPriceService;
         }
 
-        public List<ServiceBusinessResponse> GetServicesOfCurrentBusiness()
+        public async Task<List<ServiceBusinessResponse>> GetServicesOfCurrentBusiness()
         {
             var businessId = _tenantProvider.GetBusinessId()
                 ?? throw new ConflictException("No se encontró la empresa.");
 
-            return _serviceRepository.GetByBusinessId(businessId)
+             var Services = _serviceRepository.GetByBusinessId(businessId)
                 .Where(s => !s.IsDeleted)
                 .Select(s => s.ToServiceResponse())
                 .ToList();
+
+            var dolarPrice = await _dolarPriceService.CurrentDolarPrice();
+
+            for (int i = 0; i < Services.Count; i++)
+            {
+                Services[i].PriceUSD = Math.Round(Services[i].Price / dolarPrice, 2);
+            }
+
+            return Services;
         }
 
         public ServiceBusinessResponse GetById(Guid id)

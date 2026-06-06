@@ -30,10 +30,10 @@ namespace GestionTurnos.Presentation.Controllers
 
         [HttpGet]
 
-        public IActionResult GetServicesOfCurrentBusiness()
+        public async Task<IActionResult> GetServicesOfCurrentBusiness()
         {
-           var Services = _serviceService.GetServicesOfCurrentBusiness();
-            return Ok(Services);
+           var Services = await _serviceService.GetServicesOfCurrentBusiness();
+            return  Ok(Services);
         }
 
 

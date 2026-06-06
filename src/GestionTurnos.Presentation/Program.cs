@@ -1,6 +1,7 @@
 using GestionTurnos.Application.Abstraction;
 using GestionTurnos.Application.Abstraction.Infrastructure;
 using GestionTurnos.Application.Abstraction.Infrastructure.Auth;
+using GestionTurnos.Application.Abstraction.Infrastructure.External_Interface;
 using GestionTurnos.Application.Services;
 using GestionTurnos.Infrastructure.BackgroundServices;
 using GestionTurnos.Infrastructure.ExternalServices;
@@ -88,6 +89,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                RoleClaimType = "role"
            };
        });
+
+builder.Services.AddHttpClient<IDolarPriceService, DolarPriceService>(DolarApp =>
+{
+    DolarApp.BaseAddress = new Uri(builder.Configuration["DolarHoy:Base_URL"]!);
+});
 
 builder.Services.AddCors(options => // NO LE DEN PELOTA A ESTO ES PARA PROBAR TODO EN EL FRONT Y BACK
 {
