@@ -21,10 +21,15 @@ namespace GestionTurnos.Application.Services
 
         public StaffsResponse CreateStaff(StaffRequest request)
         {
-            var existingStaff = _staffRepository.GetAll().FirstOrDefault(s => s.Email == request.Email);
+            var existingStaff = _staffRepository.GetByEmail(request.Email);
             if (existingStaff != null)
             {
                 throw new ConflictException("Ya existe un usuario con ese correo electrónico.");
+            }
+            var AdminExisting = _staffRepository.GetAll().Any(s => s.Rol == request.Rol); 
+            if (AdminExisting == false)
+            {
+                throw new ConflictException("Cada negocio solo puede tener un Admin ");
             }
             var IdBusiness = _tenantProvider.GetBusinessId()
                 ?? Guid.Empty;
@@ -39,7 +44,7 @@ namespace GestionTurnos.Application.Services
         public List<StaffsResponse> GetStaffOfCurrentBusiness()
         {
             
-            var staffList = _staffRepository.GetAll();
+            var staffList = _staffRepository.GetAll().Where(s => s.Rol != Rol.Admin);
             return staffList.Select(s => s.ToResponse()).ToList();
         }
 
@@ -79,6 +84,13 @@ namespace GestionTurnos.Application.Services
         {
             var staff = _staffRepository.GetByEmail(email) ?? null;
             
+            return staff;
+        }
+
+        public Staff GetByEmailGlobal(string email)
+        {
+            var staff = _staffRepository.GetByEmailGlobal(email) ?? null;
+
             return staff;
         }
     }
