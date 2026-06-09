@@ -42,7 +42,7 @@ namespace GestionTurnos.Presentation.Controllers
         }
 
         [Authorize(Policy = Policies.Admin)]
-        [HttpPut("/MyBusiness/Update")]
+        [HttpPut("MyBusiness/Update")]
         public ActionResult UpdateMyBusiness([FromBody] BusinessUpdateRequest request)
         {
             _businessService.Update(request);
@@ -50,7 +50,7 @@ namespace GestionTurnos.Presentation.Controllers
         }
         
         [Authorize(Policy = Policies.Admin)]
-        [HttpDelete("/MyBusiness/Delete")]
+        [HttpDelete("MyBusiness/Delete")]
         public ActionResult<bool> Delete()
         {
 

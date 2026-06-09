@@ -53,12 +53,20 @@ namespace GestionTurnos.Application.Mapper
 
         public static void UpdateFromDto(this Staff entity, StaffRequest request)
         {
-            entity.Name = request.Name;
-            entity.Email = request.Email;
-            entity.Password = request.Password;
-            entity.Phone = request.Phone;
-            entity.Rol = request.Rol;
-            entity.LinkPhoto = request.LinkPhoto ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(request.Name))
+                entity.Name = request.Name;
+
+            if (!string.IsNullOrWhiteSpace(request.Email))
+                entity.Email = request.Email;
+
+            if (!string.IsNullOrWhiteSpace(request.Phone))
+                entity.Phone = request.Phone;
+
+            if (!string.IsNullOrWhiteSpace(request.LinkPhoto))
+                entity.LinkPhoto = request.LinkPhoto;
+
+                entity.Rol = request.Rol;
+           
         }
     }
 }

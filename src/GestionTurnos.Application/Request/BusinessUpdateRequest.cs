@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using GestionTurnos.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace GestionTurnos.Application.Request
 {
@@ -6,13 +7,16 @@ namespace GestionTurnos.Application.Request
     {
         
      
-        public required string Name { get; set; } = string.Empty;
+        public  string? Name { get; set; } = string.Empty;
 
        
         
-        public required string Phone { get; set; } = string.Empty;
+        public  string? Phone { get; set; } = string.Empty;
+        public string? Url { get; set; }
 
        
-        public required string LogoUrl { get; set; } = string.Empty;
+        public  string? LogoUrl { get; set; } = string.Empty;
+
+        public StatusBusiness? IsActive { get; set; } 
     }
 }

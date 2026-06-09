@@ -26,8 +26,8 @@ namespace GestionTurnos.Application.Services
             {
                 throw new ConflictException("Ya existe un usuario con ese correo electrónico.");
             }
-            var AdminExisting = _staffRepository.GetAll().Any(s => s.Rol == request.Rol); 
-            if (AdminExisting == false)
+            var AdminExisting = _staffRepository.GetAll().Any(s => s.Rol == Rol.Admin); //No anda arreglalo
+            if (AdminExisting)
             {
                 throw new ConflictException("Cada negocio solo puede tener un Admin ");
             }
