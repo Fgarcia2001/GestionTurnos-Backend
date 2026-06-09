@@ -54,14 +54,14 @@ namespace GestionTurnos.Application.Services
             return business.ToResponse();
         }
 
-        public void Update(BusinessUpdateRequest value)
+        public void Update(BusinessUpdateRequest request)
         {
             var BusinesId = _tenantProvider.GetBusinessId();
 
             var existingBusiness = _businessRepository.GetById(BusinesId ?? Guid.Empty)
                 ?? throw new KeyNotFoundException("Empresa no encontrada");
 
-            existingBusiness.Name = value.Name;
+            existingBusiness.ToUpdateBusiness(request);
 
 
             _businessRepository.Update(existingBusiness);

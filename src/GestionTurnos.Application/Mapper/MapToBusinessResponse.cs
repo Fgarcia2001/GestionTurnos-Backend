@@ -1,5 +1,7 @@
-using GestionTurnos.Domain.Entities;
+using GestionTurnos.Application.Request;
 using GestionTurnos.Application.Response;
+using GestionTurnos.Domain.Entities;
+using System.ComponentModel.DataAnnotations;
 
 namespace GestionTurnos.Application.Mapper
 {
@@ -40,6 +42,20 @@ namespace GestionTurnos.Application.Mapper
             };
         }
 
-      
+        public static void ToUpdateBusiness(this Business business, BusinessUpdateRequest request)
+        {
+            if (!string.IsNullOrWhiteSpace(request.Name))
+                business.Name = request.Name;
+
+            if (!string.IsNullOrWhiteSpace(request.Url))
+                business.Url = request.Url;
+
+            if (!string.IsNullOrWhiteSpace(request.LogoUrl))
+                business.UrlLogo = request.LogoUrl;
+
+            if (request.IsActive.HasValue)
+                business.IsActive = request.IsActive.Value;
+        }
+
     }
 }
