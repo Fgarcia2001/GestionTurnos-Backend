@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -97,7 +98,12 @@ builder.Services.AddHttpClient("DolarApi", client =>
     client.BaseAddress = new Uri(builder.Configuration[
 "DolarHoy:Base_URL"]!);
 });
-
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Agrega el conversor para que los Enums se serialicen como strings
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 builder.Services.AddCors(options => // NO LE DEN PELOTA A ESTO ES PARA PROBAR TODO EN EL FRONT Y BACK
 {

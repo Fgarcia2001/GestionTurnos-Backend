@@ -62,16 +62,16 @@ namespace GestionTurnos.Infrastructure.ExternalServices
 
         public AuthResponse? SignUp(SignUpRequest request)
         {
-            bool emailExists = _staffService.GetByEmail(request.Email) != null;
+            bool emailExists = _staffService.GetByEmailGlobal(request.Email) != null;
             if (emailExists)
             {
                 throw new ConflictException("El correo electrónico ya está registrado.");
             }
 
             
-            if (!Enum.TryParse<TypeBusiness>(request.BusinessCategory, ignoreCase: true, out var typeBusinessParsed)) // MICAEL ARREGLA ESTO+
+            if (!Enum.TryParse<TypeBusiness>(request.BusinessCategory, ignoreCase: true, out var typeBusinessParsed)) 
             {
-                //throw new BadRequestException($"La categoría de negocio '{request.BusinessCategory}' no es válida.");
+                throw new ConflictException($"La categoría de negocio '{request.BusinessCategory}' no es válida.");
             }
 
 
