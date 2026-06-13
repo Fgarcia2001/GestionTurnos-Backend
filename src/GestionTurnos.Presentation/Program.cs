@@ -75,6 +75,8 @@ builder.Services.AddAuthorization(options =>
     policy.RequireClaim(ClaimTypes.Role, "SysAdmin","Admin", "Recepcionista"));
     options.AddPolicy(Policies.SysAdminOrAdmin, policy =>
     policy.RequireClaim(ClaimTypes.Role, "SysAdmin", "Admin"));
+    options.AddPolicy(Policies.AdminOrRecepcionista, policy =>
+    policy.RequireClaim(ClaimTypes.Role, "Recepcionista", "Admin"));
 });
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
        .AddJwtBearer(options =>
@@ -101,7 +103,6 @@ builder.Services.AddHttpClient("DolarApi", client =>
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        // Agrega el conversor para que los Enums se serialicen como strings
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 

@@ -195,10 +195,6 @@ namespace GestionTurnos.Infrastructure.ExternalServices
                 throw new ConflictException("La nueva contraseña no puede ser igual a la contraseña anterior.");
             }
 
-
-            userEntity.Password = BCrypt.Net.BCrypt.HashPassword(request);
-
-
             userEntity.Password = request;
             userEntity.UpdateDateTime = DateTime.UtcNow;
 
