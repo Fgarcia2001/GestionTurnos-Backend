@@ -13,5 +13,13 @@ namespace GestionTurnos.Application.Abstraction
         BusinessSubscriptionResponse UpdateStatus(Guid id, string status);
         void Delete(Guid id);
         void InitialBusinessSubscription(Plan plan, Business newBusiness);
+
+        BusinessSubscriptionResponse GetCurrentSubscription(Guid businessId);
+
+        void RenewSubscription(Guid businessId);
+
+        void ChangePlan(Guid businessId, Guid planId);
+
+        //void ChangePlan(Guid businessId, Guid newPlanId);
     }
 }
