@@ -47,8 +47,20 @@ namespace GestionTurnos.Application.Services
             var businessId = _tenantProvider.GetBusinessId()
                 ?? throw new ConflictException("No se encontró la empresa.");
 
+            bool branchExist = _branchRepository
+                .GetByBusinessId(businessId)
+                .Any( b => 
+                    string.Equals(
+                        b.Name.Trim(),
+                        request.Name.Trim(),
+                        StringComparison.OrdinalIgnoreCase));
+
+            if (branchExist)
+            {
+                throw new ConflictException("Ya existe una sucursal con ese nombre");
+            }
+
             var newBranch = request.ToBranch(businessId);
-            newBranch.BusinessId = businessId;
 
             _branchRepository.Add(newBranch);
 
@@ -57,20 +69,52 @@ namespace GestionTurnos.Application.Services
 
         public BranchResponse UpdateBranch(CreateBranchRequest request, Guid id)
         {
+            var businessId = _tenantProvider.GetBusinessId()
+                ?? throw new ConflictException("No se encontro la empresa");
+
             var existingBranch = _branchRepository.GetById(id)
-                ?? throw new ConflictException("Sucursal no encontrada.");
+                ?? throw new ConflictException("Sucursal no encontrada");
+
+            if(existingBranch.BusinessId != businessId)
+            {
+                throw new ConflictException("La sucursal no pertenece a su negocio");
+            }
+
+            bool branchExist = _branchRepository
+                .GetByBusinessId(businessId)
+                .Any(b =>
+                    b.Id != id &&
+                    string.Equals(
+                        b.Name.Trim(),
+                        request.Name.Trim(),
+                        StringComparison.OrdinalIgnoreCase));
+
+            if (branchExist)
+            {
+                throw new ConflictException("Ya existe una sucursal con ese nombre");
+            }
 
             existingBranch.UpdateFromRequest(request);
 
             _branchRepository.Update(existingBranch);
 
             return existingBranch.ToBranchResponse();
+
         }
 
         public void DeleteBranch(Guid id)
         {
+            var businessId = _tenantProvider.GetBusinessId()
+                ?? throw new ConflictException("No se encontró la empresa.");
+
             var branch = _branchRepository.GetById(id)
                 ?? throw new ConflictException("Sucursal no encontrada.");
+
+            if (branch.BusinessId != businessId)
+            {
+                throw new ConflictException(
+                    "La sucursal no pertenece a su negocio.");
+            }
 
             _branchRepository.Delete(id);
         }

@@ -9,5 +9,9 @@ namespace GestionTurnos.Application.Abstraction.Infrastructure
         List<BusinessSubscription> GetAllWithDetails();
         BusinessSubscription? GetByIdWithDetails(Guid id);
         List<BusinessSubscription> GetByBusinessId(Guid businessId);
+
+        BusinessSubscription? GetCurrentSubscription(Guid businessId);
+
+        BusinessSubscription? GetLatestByBusinessId(Guid businessId);
     }
 }
