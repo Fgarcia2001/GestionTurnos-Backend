@@ -121,5 +121,17 @@ namespace GestionTurnos.Application.Services
             return _planRepository.GetById(planId.Value)
                 ?? throw new ConflictException("El plan especificado no existe");
         }
+
+        public Plan GetActivePlan(Guid planId)
+        {
+            var plan = _planRepository.GetById(planId)
+                ?? throw new NotFoundException("El plan especificado no existe");
+            if (!plan.IsActive)
+            {
+                throw new ConflictException("El plan se encuentra inactivo");
+            }
+
+            return plan;
+        }
     }
 }

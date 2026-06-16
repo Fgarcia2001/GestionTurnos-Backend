@@ -13,5 +13,7 @@ namespace GestionTurnos.Application.Abstraction
         void Delete(Guid id);
 
         Plan GetPlanOrDefault(Guid? planId);
+
+        Plan GetActivePlan(Guid PlanId);
     }
 }
