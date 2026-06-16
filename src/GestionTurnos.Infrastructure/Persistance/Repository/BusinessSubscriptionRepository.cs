@@ -50,5 +50,29 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
                 .Where(bs => bs.BusinessId == businessId && !bs.IsDeleted)
                 .ToList();
         }
+
+        public BusinessSubscription? GetCurrentSubscription(Guid businessId)
+        {
+            return _dbSet
+                .Include(bs => bs.Business)
+                .Include(bs => bs.Plan)
+                .FirstOrDefault(bs =>
+                    bs.BusinessId == businessId &&
+                    bs.Status == Status.Active &&
+                    !bs.IsDeleted);
+                    
+        }
+
+        public BusinessSubscription? GetLatestByBusinessId(Guid businessId)
+        {
+            return _dbSet
+                .Include(bs => bs.Business)
+                .Include(bs => bs.Plan)
+                .Where( bs =>
+                    bs.BusinessId == businessId &&
+                    !bs.IsDeleted)
+                .OrderByDescending(bs => bs.EndDate)
+                .FirstOrDefault();
+        }
     }
 }
