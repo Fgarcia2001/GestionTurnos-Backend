@@ -116,6 +116,25 @@ namespace GestionTurnos.Application.Services
             var service = _appointmentRepository.GetServiceById(request.ServiceId)
                 ?? throw new Exception("El servicio no fue encontrado.");
 
+            if(service.BusinessId != staff.BusinessId)
+            {
+                throw new ConflictException("El servicio no pertenece al negocio");
+            }
+
+            if (service.IsDeleted)
+            {
+                throw new ConflictException("El servicio no se encuentra disponible");
+            }
+
+            if(request.Day.Date < DateTime.Today)
+            {
+                throw new ConflictException("No se puede reservar turnos con fechas pasadas");
+            }
+
+
+
+
+
             // 3. Busco o creo el cliente delegando a ClientService
             var clientDto = new ClientRequest
             {
