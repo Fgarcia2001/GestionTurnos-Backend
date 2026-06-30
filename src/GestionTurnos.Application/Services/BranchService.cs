@@ -169,7 +169,7 @@ namespace GestionTurnos.Application.Services
         public InfoBranchResponse GetInfoBranch(Guid idBranch)
         {
             
-            var branch = _branchRepository.GetInfoBranch( idBranch)
+            var branch = _branchRepository.GetInfoBranch(idBranch)
                 ?? throw new ConflictException("Sucursal no encontrada.");
 
             return branch.ToInfoBranchResponse();
