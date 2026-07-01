@@ -54,9 +54,9 @@ namespace GestionTurnos.Application.Mapper
 
                 // Mapeamos las listas internas usando los mappers de cada entidad relacionada
                 Schedules = branch.Schedules.Select(s => s.ToResponseSchedule()).ToList(),
-                Staff = branch.Staff.Select(st => st.ToResponse()).ToList(),
+             /*  Staff = branch.Staff.Select(st => st.ToResponse()).ToList(),
                 Services = branch.Services.Select(sr => sr.ToServiceResponse()).ToList()
-            };
+            */};
         }
     }
 }

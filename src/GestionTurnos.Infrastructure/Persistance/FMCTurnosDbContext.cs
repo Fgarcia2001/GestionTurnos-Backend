@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using GestionTurnos.Domain.Entities;
 
 namespace GestionTurnos.Infrastructure.Persistence
@@ -68,7 +68,7 @@ namespace GestionTurnos.Infrastructure.Persistence
             // Relación Branch -> Staff (1 a muchos)
             modelBuilder.Entity<Staff>()
                 .HasOne(s => s.Branch)
-                .WithMany()
+                .WithMany(b => b.Staff)
                 .HasForeignKey(s => s.BranchId)
                 .OnDelete(DeleteBehavior.Restrict);
 
