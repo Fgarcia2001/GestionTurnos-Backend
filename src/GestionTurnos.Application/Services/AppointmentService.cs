@@ -246,7 +246,7 @@ namespace GestionTurnos.Application.Services
             return fullyLoaded.ToResponse();
         }
 
-        public AppointmentResponse UpdateStatus(Guid id, GestionTurnos.Domain.Entities.AppointmentStatus newStatus)
+        public AppointmentResponse UpdateStatus(Guid id, AppointmentStatus newStatus)
         {
             var existing = _appointmentRepository.GetById(id) 
                 ?? throw new Exception("Turno no encontrado.");
