@@ -24,37 +24,19 @@ namespace GestionTurnos.Presentation.Controllers
         [HttpGet]
         public ActionResult<List<BranchResponse>> GetAll()
         {
-            try
-            {
+
                 var branches = _branchService.GetBranchesOfCurrentBusiness();
                 return Ok(branches);
-            }
-            catch (ConflictException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "Ocurrió un error inesperado.");
-            }
+
         }
         [Authorize(Policy = Policies.Admin)]
         [HttpGet("{id}")]
         public ActionResult<BranchResponse> GetById([FromRoute] Guid id)
         {
-            try
-            {
+      
                 var branch = _branchService.GetById(id);
                 return Ok(branch);
-            }
-            catch (ConflictException ex)
-            {
-                return NotFound(ex.Message);
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, "Ocurrió un error inesperado.");
-            }
+         
         }
         [AllowAnonymous]
         [HttpGet("InfoBranch/{idBranch}")]
