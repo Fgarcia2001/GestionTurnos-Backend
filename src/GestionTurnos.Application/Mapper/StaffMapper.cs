@@ -46,8 +46,10 @@ namespace GestionTurnos.Application.Mapper
                 StaffPhone = entity.Phone,
                 Rol = entity.Rol,
                 StaffLinkPhoto = entity.LinkPhoto,
+                BranchId = entity.BranchId,
+                BranchName = entity.Branch?.Name ?? string.Empty,
                 BusinessId = entity.BusinessId,
-                BusinessName = entity.Business != null ? entity.Business.Name : "Desconocido"
+                BusinessName = entity.Business?.Name ?? "Desconocido"
             };
         }
 
