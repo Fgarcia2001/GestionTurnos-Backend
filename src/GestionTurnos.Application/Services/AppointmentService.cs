@@ -27,7 +27,7 @@ namespace GestionTurnos.Application.Services
             _appointmentNotificationService = appointmentNotificationService;
         }
         /// Valida que el turno caiga dentro del horario de atencion de la sucursal
-        /// y devuelve el endTime calculado a partir de la duración del servicio.
+        /// y devuelve el endTime calculado a partir de la duracion del servicio.
         private TimeSpan ValidateAppointmentWithinSchedule(Guid branchId, DateTime day, TimeSpan startTime, int serviceDurationMinutes)
         {
             var dayOfWeek = day.DayOfWeek;
@@ -145,7 +145,8 @@ namespace GestionTurnos.Application.Services
                 throw new ConflictException("El servicio no se encuentra disponible");
             }
 
-            if(request.Day.Date < DateTime.Today)
+            var argDate = DateTime.UtcNow.AddHours(-3).Date;
+            if(request.Day.Date < argDate)
             {
                 throw new ConflictException("No se puede reservar turnos con fechas pasadas");
             }
