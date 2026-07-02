@@ -29,6 +29,14 @@ namespace GestionTurnos.Infrastructure.Persistance.Repository
             return _dbSet.FirstOrDefault(s => s.Email == email && !s.IsDeleted);
         }
 
+        public override List<Staff> GetAllGlobal()
+        {
+            return _dbSet.Where(s => !s.IsDeleted)
+                .Include(s => s.Branch)
+                .Include(s => s.Business)
+                .ToList();
+        }
+
         public override Staff? GetById(Guid id)
         {
             return _dbSet
